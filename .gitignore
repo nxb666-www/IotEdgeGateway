@@ -1,0 +1,22 @@
+# 编译产物
+build/
+F411/Objects/
+F411/Listings/
+*.o
+*.d
+*.crf
+*.axf
+*.hex
+*.map
+*.lst
+
+# SSH 密钥
+codex_vm_key
+codex_vm_key.pub
+
+# VS Code
+.vscode/
+
+# 系统文件
+.DS_Store
+Thumbs.db

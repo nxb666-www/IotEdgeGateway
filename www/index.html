@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RK3568 智能控制中心</title>
+    <style>
+        :root {
+            --primary: #5c67f2;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 0 25px;
+            border-radius: 16px;
+            min-height: 60px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        /* 主区域布局 */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 0;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1f2937;
+        }
+
+        /* 视频区域 - 保留原样式，仅替换内部为video标签 */
+        .video-box {
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* 按钮通用 */
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 13px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-cap {
+            background: var(--success);
+        }
+
+        .btn-rec {
+            background: var(--danger);
+        }
+
+        .btn-stream-start {
+            background: var(--info);
+        }
+
+        .btn-stream-stop {
+            background: #64748b;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 控制面板 */
+        .control-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #edf2f7;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--primary);
+        }
+
+        .dir-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-dir {
+            background: #e2e8f0;
+            color: #64748b;
+            padding: 6px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-dir.active {
+            background: #fff;
+            color: var(--primary);
+            border-color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* 开关手柄 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        /* 日志窗口 - 填满剩余空间 */
+        .log-container {
+            background: #0f172a;
+            color: #38bdf8;
+            border-radius: 12px;
+            padding: 15px;
+            flex: 1;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            border: 1px solid #1e293b;
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 2px;
+        }
+
+        .log-time {
+            color: #94a3b8;
+            margin-right: 8px;
+        }
+
+        /* 底部传感器卡片 */
+        .sensor-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .s-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .s-val {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 4px 0;
+        }
+
+        .s-unit {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div style="font-size: 20px; font-weight: 800; letter-spacing: 1px;">RK3568 智能网关控制系统</div>
+        <div class="status-tag" id="conn_status">● 设备在线</div>
+    </div>
+
+    <div class="main-grid">
+        <!-- 左侧 -->
+        <div class="column">
+            <div class="card" style="flex: 1;">
+                <div class="card-title">🎥 实时画面监控</div>
+                <div class="video-box">
+                    <!-- 替换为video标签，移除原img -->
+                    <video id="videoPlayer" muted playsinline></video>
+                </div>
+                <div class="video-bar">
+                    <button id="streamStartBtn" class="btn btn-stream-start">▶ 开始推流</button>
+                    <button id="streamStopBtn" class="btn btn-stream-stop" disabled>⏹ 停止推流</button>
+                    <button id="snapshotBtn" class="btn btn-cap">📸 抓拍照片</button>
+                    <button id="recordBtn" class="btn btn-rec">🔴 视频录制</button>
+                </div>
+            </div>
+
+            <div class="sensor-row">
+                <div class="s-card">
+                    <div>温度</div>
+                    <div class="s-val" id="val_temp">--</div>
+                    <div class="s-unit">°C</div>
+                </div>
+                <div class="s-card">
+                    <div>湿度</div>
+                    <div class="s-val" id="val_humi">--</div>
+                    <div class="s-unit">% RH</div>
+                </div>
+                <div class="s-card">
+                    <div>光照强度</div>
+                    <div class="s-val" id="val_light">--</div>
+                    <div class="s-unit">Lux</div>
+                </div>
+                <div class="s-card">
+                    <div>红外检测</div>
+                    <div class="s-val" id="val_ir" style="font-size:16px;">--</div>
+                    <div class="s-unit">Status</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧 -->
+        <div class="column">
+            <!-- 控制卡片 -->
+            <div class="card">
+                <div class="card-title">⚙️ 硬件外设控制</div>
+
+                <div class="control-item">
+                    <div class="label-row"><span>LED 照明灯</span><label class="switch"><input type="checkbox" id="led_sw"
+                                onchange="updateLed()"><span class="slider"></span></label></div>
+                    <input type="range" id="led_br" value="50" onchange="updateLed()">
+                </div>
+
+                <div class="control-item">
+                    <div class="label-row"><span>直流电机控制</span><label class="switch"><input type="checkbox" id="motor_sw"
+                                onchange="updateMotor()"><span class="slider"></span></label></div>
+                    <input type="range" id="motor_sp" value="30" onchange="updateMotor()">
+                    <div class="dir-btns">
+                        <button id="dir_f" class="btn-dir active" onclick="setMotorDirUser(0)">正向旋转</button>
+                        <button id="dir_r" class="btn-dir" onclick="setMotorDirUser(1)">反向旋转</button>
+                    </div>
+                </div>
+
+                <div class="control-item" style="border-left: 4px solid var(--warning); margin-bottom: 0;">
+                    <div class="label-row"><span>紧急蜂鸣报警</span><label class="switch"><input type="checkbox"
+                                id="buzzer_sw" onchange="cmd('buzzer', this.checked?'on':'off')"><span
+                                class="slider"></span></label></div>
+                </div>
+            </div>
+
+            <!-- 日志卡片 -->
+            <div class="card" style="flex: 1; min-height: 0;">
+                <div class="card-title">📜 系统运行日志</div>
+                <div class="log-container" id="log_box">
+                    <div class="log-line"><span class="log-time">[00:00:00]</span>系统初始化完成...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入HLS.js -->
+    <script src="/js/hls.min.js"></script>
+
+    <script>
+        // ========== 视频流核心配置 ==========
+        const STREAM_URL = '/stream/stream.m3u8';
+        const API_START_STREAM = '/api/camera/start_stream';
+        const API_STOP_STREAM = '/api/camera/stop_stream';
+        const API_START_RECORD = '/api/camera/start_record';
+        const API_STOP_RECORD = '/api/camera/stop_record';
+        const API_SNAPSHOT = '/api/camera/snapshot';
+
+        // 全局状态
+        let streamStarted = false;
+        let recordStarted = false;
+        let hlsInstance = null;
+
+        // DOM元素
+        const video = document.getElementById('videoPlayer');
+        const streamStartBtn = document.getElementById('streamStartBtn');
+        const streamStopBtn = document.getElementById('streamStopBtn');
+        const snapshotBtn = document.getElementById('snapshotBtn');
+        const recordBtn = document.getElementById('recordBtn');
+
+        let currentDir = 0;
+
+        // 写入日志函数（增强，兼容视频流日志）
+        function addLog(msg) {
+            const box = document.getElementById('log_box');
+            const time = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            line.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
+            box.appendChild(line);
+            box.scrollTop = box.scrollHeight; // 自动滚动到底部
+        }
+
+        // 通用请求函数
+        async function sendCommand(url, options = {}) {
+            try {
+                const res = await fetch(url, options);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
+            } catch (err) {
+                addLog(`接口请求失败: ${err.message}`);
+                console.error('API Error:', err);
+                throw err;
+            }
+        }
+
+        // ========== 视频流控制逻辑 ==========
+        async function startStream() {
+            if (streamStarted) return;
+            try {
+                addLog('正在启动视频流...');
+                await sendCommand(API_START_STREAM);
+
+                if (Hls.isSupported()) {
+                    hlsInstance = new Hls();
+                    hlsInstance.loadSource(STREAM_URL);
+                    hlsInstance.attachMedia(video);
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                        video.play().catch(e => {
+                            addLog(`自动播放被阻止: ${e.message}`);
+                            console.warn("Autoplay blocked:", e);
+                        });
+                        addLog('✅ 视频流已连接');
+                    });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = STREAM_URL;
+                    video.addEventListener('loadedmetadata', () => {
+                        video.play().catch(e => {
+                            addLog(`自动播放被阻止: ${e.message}`);
+                            console.warn("Autoplay blocked:", e);
+                        });
+                        addLog('✅ 视频流已连接（Safari）');
+                    });
+                } else {
+                    addLog('❌ 浏览器不支持HLS视频流');
+                    alert('❌ 浏览器不支持 HLS 视频流！');
+                    return;
+                }
+
+                streamStarted = true;
+                streamStartBtn.disabled = true;
+                streamStopBtn.disabled = false;
+            } catch (err) {
+                addLog(`❌ 视频流启动失败: ${err.message}`);
+            }
+        }
+
+        async function stopStream() {
+            if (!streamStarted) return;
+            try {
+                addLog('正在停止视频流...');
+                if (hlsInstance) {
+                    hlsInstance.destroy();
+                    hlsInstance = null;
+                }
+                video.src = '';
+                await sendCommand(API_STOP_STREAM);
+
+                streamStarted = false;
+                streamStartBtn.disabled = false;
+                streamStopBtn.disabled = true;
+                addLog('⏹ 视频流已停止');
+            } catch (err) {
+                addLog(`⚠️ 停止视频流出错: ${err.message}`);
+            }
+        }
+
+        async function takeSnapshot() {
+            try {
+                addLog('正在拍照...');
+                await sendCommand(API_SNAPSHOT);
+                addLog('✅ 拍照成功！照片已保存至 snapshots/');
+            } catch (err) {
+                addLog(`❌ 拍照失败: ${err.message}`);
+            }
+        }
+
+        async function toggleRecord() {
+            if (!streamStarted) {
+                addLog('❌ 请先启动视频流再进行录像');
+                return;
+            }
+
+            if (!recordStarted) {
+                // 开始录像
+                try {
+                    addLog('正在启动录像...');
+                    await sendCommand(API_START_RECORD);
+                    recordStarted = true;
+                    recordBtn.innerHTML = '⏹ 停止录制';
+                    addLog('✅ 录像已开始');
+                } catch (err) {
+                    addLog(`❌ 录像启动失败: ${err.message}`);
+                }
+            } else {
+                // 停止录像
+                try {
+                    addLog('正在停止录像...');
+                    await sendCommand(API_STOP_RECORD);
+                    recordStarted = false;
+                    recordBtn.innerHTML = '🔴 视频录制';
+                    addLog('✅ 录像已保存');
+                } catch (err) {
+                    addLog(`⚠️ 停止录像出错: ${err.message}`);
+                }
+            }
+        }
+
+      function cmd() {
+    const payload = {
+        led_on: document.getElementById('led_sw').checked ? 1 : 0,
+        led_br: parseInt(document.getElementById('led_br').value),
+        motor_on: document.getElementById('motor_sw').checked ? 1 : 0,
+        motor_sp: parseInt(document.getElementById('motor_sp').value),
+        motor_dir: currentDir,  
+        buzzer: document.getElementById('buzzer_sw').checked ? 1 : 0
+    };
+
+    const msg = {
+        type: "control",
+        payload: payload
+    };
+
+    addLog(`发送指令: ${JSON.stringify(msg)}`);
+
+    fetch('/api/control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(msg)
+    }).catch(err => {
+        addLog(`指令发送失败: ${err.message}`);
+    });
+}
+
+
+        function updateLed() {
+            const sw = document.getElementById('led_sw').checked ? '开启' : '关闭';
+            const br = document.getElementById('led_br').value;
+            addLog(`LED调整: ${sw}, 亮度 ${br}%`);
+            cmd();
+        }
+
+        function setMotorDirUI(dir) {
+    currentDir = dir;
+
+    document.getElementById('dir_f').classList.toggle('active', dir === 0);
+    document.getElementById('dir_r').classList.toggle('active', dir === 1);
+}
+
+function setMotorDirUser(dir) {
+    setMotorDirUI(dir);
+    addLog(`电机方向切换: ${dir === 0 ? '正转' : '反转'}`);
+    cmd();   // ✅ 只有用户操作才发
+}
+
+
+
+        function updateMotor() {
+    const sw = document.getElementById('motor_sw').checked ? '开启' : '关闭';
+    const sp = document.getElementById('motor_sp').value;
+
+    cmd();
+
+    addLog(
+        `电机控制: ${sw}, 速度 ${sp}%, 方向 ${currentDir === 0 ? '正转' : '反转'}`
+    );
+}
+        // ========== 事件绑定 ==========
+        // 视频流按钮绑定
+        streamStartBtn.onclick = startStream;
+        streamStopBtn.onclick = stopStream;
+        snapshotBtn.onclick = takeSnapshot;
+        recordBtn.onclick = toggleRecord;
+
+        // 定时拉取传感器数据
+        setInterval(() => {
+            fetch('/api/status').then(r => r.json()).then(data => {
+                // 渲染传感器数据
+                document.getElementById('val_temp').innerText = data.temp || '--';
+                document.getElementById('val_humi').innerText = data.humi || '--';
+                document.getElementById('val_light').innerText = data.light || '--';
+                const irBox = document.getElementById('val_ir');
+                irBox.innerText = data.ir>2000 ? "☢ 有人" : "安全";
+                irBox.style.color = data.ir ? "var(--danger)" : "var(--success)";
+
+                // 同步硬件状态到前端控件
+                document.getElementById('led_sw').checked = data.led_on === 1;
+                document.getElementById('led_br').value = data.led_br || 50;
+                document.getElementById('motor_sw').checked = data.motor_on === 1;
+                document.getElementById('motor_sp').value = data.motor_sp || 30;
+                setMotorDirUI(data.motor_dir);
+                document.getElementById('buzzer_sw').checked = data.buzzer === 1;
+
+                // 恢复连接状态
+                document.getElementById('conn_status').innerText = "● 设备在线";
+                document.getElementById('conn_status').style.color = "#fff";
+            }).catch(e => {
+                document.getElementById('conn_status').innerText = "● 连接断开";
+                document.getElementById('conn_status').style.color = "#ff4d4d";
+                addLog(`传感器数据获取失败: ${e.message}`);
+            });
+        }, 1000);
+
+        // 初始化日志
+        addLog('[系统] 页面加载完成，设备控制就绪');
+    </script>
+
+</body>
+
+</html>

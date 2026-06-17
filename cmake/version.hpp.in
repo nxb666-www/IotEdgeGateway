@@ -1,0 +1,6 @@
+#ifndef IOTGW_VERSION_HPP
+#define IOTGW_VERSION_HPP
+
+#define IOTGW_VERSION "@IOTGW_VERSION@"
+
+#endif
