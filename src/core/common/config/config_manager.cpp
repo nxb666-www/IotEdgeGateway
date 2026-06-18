@@ -6,6 +6,30 @@
 
 using std::string;
 
+// 递归遍历 YAML 节点，把嵌套的 key 用 "." 连起来
+// 比如 network → http_api → host 存成 "network.http_api.host"
+static void FlattenNode(ryml::NodeRef node, const string& prefix, std::map<string, string>& out) {
+    if (node.has_children()) {
+        // 有子节点 → 是 map 或 list，继续递归
+        for (size_t i = 0; i < node.num_children(); i++) {
+            auto child = node.child(i);
+            string key;
+            if (child.key().len > 0) {
+                key = prefix.empty()
+                    ? string(child.key().str, child.key().len)
+                    : prefix + "." + string(child.key().str, child.key().len);
+            } else {
+                // list 元素没有 key，用下标
+                key = prefix + "[" + std::to_string(i) + "]";
+            }
+            FlattenNode(child, key, out);
+        }
+    } else if (node.has_val()) {
+        // 叶子节点 → 存值
+        out[prefix] = string(node.val().str, node.val().len);
+    }
+}
+
 bool ConfigManager::LoadYamlFile(const string& path) {
     // 读文件 → rapidyaml 解析 → 存到 data_
     std::ifstream file(path);
@@ -14,7 +38,8 @@ bool ConfigManager::LoadYamlFile(const string& path) {
     ss << file.rdbuf();
     string content = ss.str();
 
-    ryml::Tree tree = ryml::parse(c4::to_csubstr(content));
+    ryml::Tree tree = ryml::parse_in_arena(c4::to_csubstr(content));
+    FlattenNode(tree.rootref(), "", data_);
 
     return true;
 }

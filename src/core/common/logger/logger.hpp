@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <mutex>
+#include <fstream>
 
 /**
  * 日志级别枚举
@@ -70,6 +71,28 @@ public:
     void Fatal(const std::string& msg); // 致命错误
 
     void Flush();                       // 刷新日志缓冲区
+};
+
+/**
+ * ConsoleSink：输出到终端
+ * 用法：auto sink = std::make_shared<ConsoleSink>();
+ */
+class ConsoleSink : public Sink {
+public:
+    void Write(Level level, const std::string& msg) override;
+};
+
+/**
+ * FileSink：输出到文件
+ * 用法：auto sink = std::make_shared<FileSink>("logs/app.log");
+ */
+class FileSink : public Sink {
+private:
+    std::ofstream file_;
+public:
+    FileSink(const std::string& filename);
+    ~FileSink();
+    void Write(Level level, const std::string& msg) override;
 };
 
 #endif

@@ -15,4 +15,4 @@ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
 cmake --build build
 
-echo "构建完成: build/bin/iotgw_gateway"
+echo "构建完成: build/iotgw_gateway"

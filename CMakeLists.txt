@@ -44,7 +44,8 @@ target_include_directories(mongoose_lib PUBLIC
 add_library(iotgw_common STATIC
     src/core/common/logger/file_logger.cpp
     src/core/common/config/config_manager.cpp
-    src/services/web_services/api/system_api.cpp
+    src/core/device/manager/device_registry.cpp
+    src/services/web_services/websocket/websocket_server.cpp
     src/gateway/gateway_core.cpp
 )
 target_include_directories(iotgw_common PUBLIC

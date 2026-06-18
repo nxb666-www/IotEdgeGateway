@@ -1,0 +1,14 @@
+name: IotEdgeGateway
+env: development
+
+paths:
+  www_root: www
+  log_file: data/logs/iotgw-dev.log
+
+logging:
+  level: info
+
+network:
+  http_api:
+    host: 0.0.0.0
+    port: 8080
