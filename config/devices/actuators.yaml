@@ -1,0 +1,7 @@
+actuators:
+  - id: led
+    protocol: mqtt
+  - id: motor
+    protocol: mqtt
+  - id: buzzer
+    protocol: mqtt

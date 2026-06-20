@@ -3,137 +3,53 @@
 
 #include "mongoose.h"
 #include "version.hpp"
-#include "core/device/manager/device_manager.hpp"
+#include "device_api.hpp"
+#include "rule_api.hpp"
 #include <string>
 
+// RestApi：路由分发器
+// 所有 HTTP 请求从这里进来，根据 URL 路径转给对应的处理函数
+// 不干具体活，只负责"URL → 处理函数"的映射
+//
+// 类比：快递分拣中心
+//   快递（HTTP请求）进来 → 看地址（URL） → 送到对应的部门（处理函数）
 class RestApi {
 private:
-    static DeviceRegistry* registry_;
+    // 依赖的外部对象（通过 Set 方法注入）
+    static DeviceRegistry* registry_;   // 设备注册表
+    static MqttClient* mqtt_client_;    // MQTT 客户端
 
 public:
-    static void SetRegistry(DeviceRegistry* reg) {
-        registry_ = reg;
-    }
+    // 注入设备注册表（启动时调用一次）
+    static void SetRegistry(DeviceRegistry* r);
 
-    // 处理 HTTP 请求的入口
-    static void HandleRequest(mg_connection* c, mg_http_message* msg) {
-        struct mg_str caps[2]; // 用于捕获 URL 中的 :id 参数
+    // 注入 MQTT 客户端（启动时调用一次）
+    static void SetMqttClient(MqttClient* client);
 
-        // GET /api/health — 健康检查
-        if (mg_match(msg->uri, mg_str("/api/health"), NULL)) {
-            mg_http_reply(c, 200,
-                "Content-Type: application/json\r\n",
-                "{\"status\":\"ok\"}\n");
-
-        // GET /api/version — 版本查询
-        } else if (mg_match(msg->uri, mg_str("/api/version"), NULL)) {
-            mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-                "{\"version\":\"%s\"}\n", IOTGW_VERSION);
-
-        // GET /api/devices/:id — 设备详情（必须在 /api/devices 之前匹配）
-        } else if (mg_match(msg->uri, mg_str("/api/devices/#"), caps)) {
-            std::string device_id(caps[0].ptr, caps[0].len);
-            HandleDeviceDetail(c, device_id);
-
-        // GET /api/devices — 设备列表
-        } else if (mg_match(msg->uri, mg_str("/api/devices"), NULL)) {
-            HandleDeviceList(c);
-
-        // POST /api/actuators/:id/set — 下发命令
-        } else if (mg_match(msg->uri, mg_str("/api/actuators/#/set"), caps)) {
-            std::string actuator_id(caps[0].ptr, caps[0].len);
-            HandleActuatorSet(c, msg, actuator_id);
-
-        // GET /api/status — 设备状态聚合
-        } else if (mg_match(msg->uri, mg_str("/api/status"), NULL)) {
-            HandleStatus(c);
-
-        // POST /api/control — 下发控制指令
-        } else if (mg_match(msg->uri, mg_str("/api/control"), NULL)) {
-            HandleControl(c, msg);
-
-        // 都不匹配，返回 404
-        } else {
-            mg_http_reply(c, 404, "Content-Type: application/json\r\n",
-                "{\"error\":\"not_found\"}\n");
-        }
-    }
+    // HTTP 请求入口
+    // 所有 HTTP 请求都从这里进来
+    // 根据 URL 匹配路由，调用对应的处理函数
+    // 返回 true = 已处理，false = 不是 API 请求（交给静态文件服务）
+    static bool HandleRequest(mg_connection* c, mg_http_message* msg);
 
 private:
-    // GET /api/devices — 设备列表
-    static void HandleDeviceList(mg_connection* c) {
-        if (!registry_) {
-            mg_http_reply(c, 500, "Content-Type: application/json\r\n",
-                "{\"error\":\"registry not initialized\"}\n");
-            return;
-        }
-        std::string json = registry_->ToJsonList();
-        mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-            "%s", json.c_str());
-    }
-
-    // GET /api/devices/:id — 设备详情
-    static void HandleDeviceDetail(mg_connection* c, const std::string& id) {
-        if (!registry_) {
-            mg_http_reply(c, 500, "Content-Type: application/json\r\n",
-                "{\"error\":\"registry not initialized\"}\n");
-            return;
-        }
-        std::string json;
-        if (registry_->ToJsonOne(id, json)) {
-            mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-                "%s", json.c_str());
-        } else {
-            mg_http_reply(c, 404, "Content-Type: application/json\r\n",
-                "{\"error\":\"device_not_found\"}\n");
-        }
-    }
-
-    // POST /api/actuators/:id/set — 下发命令
-    static void HandleActuatorSet(mg_connection* c, mg_http_message* msg,
-                                   const std::string& actuator_id) {
-        // 获取请求体
-        std::string body(msg->body.ptr, msg->body.len);
-
-        // TODO: 通过 MQTT 发布命令到执行器
-        // 暂时只返回 ok
-        mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-            "{\"ok\":true}\n");
-    }
-
     // GET /api/status — 设备状态聚合
-    static void HandleStatus(mg_connection* c) {
-        if (!registry_) {
-            mg_http_reply(c, 500, "Content-Type: application/json\r\n",
-                "{\"error\":\"registry not initialized\"}\n");
-            return;
-        }
-
-        // 扫描所有设备，解析 last_payload 中的字段
-        auto devices = registry_->List();
-        std::string json = "{";
-        bool first = true;
-        for (const auto& dev : devices) {
-            if (!first) json += ",";
-            first = false;
-            // 简单输出设备ID和最后的payload
-            json += "\"" + dev.id + "\":" + dev.status.last_payload;
-        }
-        json += "}\n";
-
-        mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-            "%s", json.c_str());
-    }
+    // 遍历所有设备，取每个设备的最新数据，合并成一个 JSON 返回
+    // 前端每 1 秒轮询这个接口，显示传感器数据
+    static void HandleStatus(mg_connection* c);
 
     // POST /api/control — 下发控制指令
-    static void HandleControl(mg_connection* c, mg_http_message* msg) {
-        // TODO: 解析请求体，通过 MQTT 下发给对应执行器
-        mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-            "{\"status\":\"ok\"}\n");
-    }
-};
+    // 前端控制面板发 LED/电机/蜂鸣器命令到这里
+    // 解析 JSON 后通过 MQTT 下发给对应的执行器
+    static void HandleControl(mg_connection* c, mg_http_message* msg);
 
-// 静态成员初始化
-DeviceRegistry* RestApi::registry_ = nullptr;
+    // JSON 工具函数
+    // 从 JSON 中提取 value 字段（支持简单格式和信封格式）
+    static std::string ExtractValue(const std::string& json);
+    // 从 JSON 中指定位置提取数字
+    static std::string ExtractNumber(const std::string& json, size_t key_pos);
+    // 从 JSON 中提取整数值
+    static int GetJsonInt(const std::string& json, const std::string& key);
+};
 
 #endif

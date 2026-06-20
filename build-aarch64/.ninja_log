@@ -1,0 +1,3 @@
+# ninja log v5
+30	2176	1781924659000000000	CMakeFiles/iotgw_common.dir/src/core/common/logger/file_logger.cpp.o	5708a08e3be9a44b
+35	4204	1781924661000000000	CMakeFiles/iotgw_common.dir/src/core/common/config/config_manager.cpp.o	9164a3302bae3481

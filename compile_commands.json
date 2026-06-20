@@ -1,0 +1,167 @@
+[
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/cc -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -g -o CMakeFiles/mongoose_lib.dir/_deps/mongoose-src/mongoose.c.o -c /home/nie/IotEdgeGateway/build/_deps/mongoose-src/mongoose.c",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/mongoose-src/mongoose.c"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_common.dir/src/core/common/logger/file_logger.cpp.o -c /home/nie/IotEdgeGateway/src/core/common/logger/file_logger.cpp",
+  "file": "/home/nie/IotEdgeGateway/src/core/common/logger/file_logger.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_common.dir/src/core/common/config/config_manager.cpp.o -c /home/nie/IotEdgeGateway/src/core/common/config/config_manager.cpp",
+  "file": "/home/nie/IotEdgeGateway/src/core/common/config/config_manager.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_common.dir/src/services/web_services/websocket/websocket_server.cpp.o -c /home/nie/IotEdgeGateway/src/services/web_services/websocket/websocket_server.cpp",
+  "file": "/home/nie/IotEdgeGateway/src/services/web_services/websocket/websocket_server.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_common.dir/src/gateway/gateway_core.cpp.o -c /home/nie/IotEdgeGateway/src/gateway/gateway_core.cpp",
+  "file": "/home/nie/IotEdgeGateway/src/gateway/gateway_core.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_gateway.dir/src/gateway/main.cpp.o -c /home/nie/IotEdgeGateway/src/gateway/main.cpp",
+  "file": "/home/nie/IotEdgeGateway/src/gateway/main.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/common.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/common.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/common.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/node.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/node.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/node.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/node_type.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/node_type.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/node_type.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/parse.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/parse.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/parse.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/preprocess.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/preprocess.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/preprocess.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/reference_resolver.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/reference_resolver.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/reference_resolver.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/tag.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/tag.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/tag.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/tree.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/tree.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/tree.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/version.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/version.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/version.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/base64.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/base64.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/base64.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/char_traits.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/char_traits.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/char_traits.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/error.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/error.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/error.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/format.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/format.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/format.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/language.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/language.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/language.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/memory_resource.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_resource.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_resource.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/memory_util.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_util.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_util.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/utf.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/utf.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/utf.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/version.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/version.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/version.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/base64.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/base64.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/base64.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/char_traits.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/char_traits.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/char_traits.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/error.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/error.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/error.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/format.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/format.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/format.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/language.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/language.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/language.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/memory_resource.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_resource.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_resource.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/memory_util.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_util.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_util.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/utf.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/utf.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/utf.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build",
+  "command": "/usr/bin/c++ -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=c++14 -o _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/version.cpp.o -c /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/version.cpp",
+  "file": "/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/version.cpp"
+}
+]

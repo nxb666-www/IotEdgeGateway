@@ -14,7 +14,7 @@ static void FlattenNode(ryml::NodeRef node, const string& prefix, std::map<strin
         for (size_t i = 0; i < node.num_children(); i++) {
             auto child = node.child(i);
             string key;
-            if (child.key().len > 0) {
+            if (child.has_key() && child.key().len > 0) {
                 key = prefix.empty()
                     ? string(child.key().str, child.key().len)
                     : prefix + "." + string(child.key().str, child.key().len);

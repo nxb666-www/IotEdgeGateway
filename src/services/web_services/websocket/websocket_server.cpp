@@ -5,8 +5,17 @@ void on_event(mg_connection* c, int ev, void* ev_data) {
 
     if (ev == MG_EV_HTTP_MSG) {
         // HTTP 请求来了，调设置的回调
+        mg_http_message* hm = (mg_http_message*)ev_data;
+        bool handled = false;
         if (server->http_handler_) {
-            server->http_handler_(c, (mg_http_message*)ev_data);
+            handled = server->http_handler_(c, hm);
+        }
+        // 如果 API 没处理（非 /api/* 请求），回退到静态文件服务
+        if (!handled) {
+            struct mg_http_serve_opts opts;
+            memset(&opts, 0, sizeof(opts));
+            opts.root_dir = server->www_root_.c_str();
+            mg_http_serve_dir(c, hm, &opts);
         }
     } else if (ev == MG_EV_WS_MSG) {
         // WebSocket 消息来了，调设置的回调

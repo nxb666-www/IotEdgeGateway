@@ -10,6 +10,22 @@ static std::string ExtractDeviceId(const std::string& topic) {
     return topic;
 }
 
+static std::string JsonEscape(const std::string& s) {
+    std::string out;
+    out.reserve(s.size());
+    for (char ch : s) {
+        switch (ch) {
+            case '\\': out += "\\\\"; break;
+            case '"': out += "\\\""; break;
+            case '\n': out += "\\n"; break;
+            case '\r': out += "\\r"; break;
+            case '\t': out += "\\t"; break;
+            default: out += ch; break;
+        }
+    }
+    return out;
+}
+
 bool DeviceRegistry::Register(DeviceEntity device) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (device.id.empty()) return false;
@@ -132,16 +148,16 @@ std::string DeviceRegistry::ToJsonList() const {
 
         const auto& dev = pair.second;
         json += "{";
-        json += "\"id\":\"" + dev.id + "\",";
-        json += "\"kind\":\"" + dev.kind + "\",";
-        json += "\"transport\":\"" + dev.transport + "\",";
-        json += "\"telemetry_topic\":\"" + dev.telemetry_topic + "\",";
-        json += "\"command_topic\":\"" + dev.command_topic + "\",";
+        json += "\"id\":\"" + JsonEscape(dev.id) + "\",";
+        json += "\"kind\":\"" + JsonEscape(dev.kind) + "\",";
+        json += "\"transport\":\"" + JsonEscape(dev.transport) + "\",";
+        json += "\"telemetry_topic\":\"" + JsonEscape(dev.telemetry_topic) + "\",";
+        json += "\"command_topic\":\"" + JsonEscape(dev.command_topic) + "\",";
         json += "\"status\":{";
         json += "\"online\":" + std::string(dev.status.online ? "true" : "false") + ",";
         json += "\"last_seen_ms\":" + std::to_string(dev.status.last_seen_ms) + ",";
-        json += "\"last_topic\":\"" + dev.status.last_topic + "\",";
-        json += "\"last_payload\":\"" + dev.status.last_payload + "\"";
+        json += "\"last_topic\":\"" + JsonEscape(dev.status.last_topic) + "\",";
+        json += "\"last_payload\":\"" + JsonEscape(dev.status.last_payload) + "\"";
         json += "}";
         json += "}";
     }
@@ -156,16 +172,16 @@ bool DeviceRegistry::ToJsonOne(const std::string& id, std::string& out_json) con
 
     const auto& dev = it->second;
     out_json = "{";
-    out_json += "\"id\":\"" + dev.id + "\",";
-    out_json += "\"kind\":\"" + dev.kind + "\",";
-    out_json += "\"transport\":\"" + dev.transport + "\",";
-    out_json += "\"telemetry_topic\":\"" + dev.telemetry_topic + "\",";
-    out_json += "\"command_topic\":\"" + dev.command_topic + "\",";
+    out_json += "\"id\":\"" + JsonEscape(dev.id) + "\",";
+    out_json += "\"kind\":\"" + JsonEscape(dev.kind) + "\",";
+    out_json += "\"transport\":\"" + JsonEscape(dev.transport) + "\",";
+    out_json += "\"telemetry_topic\":\"" + JsonEscape(dev.telemetry_topic) + "\",";
+    out_json += "\"command_topic\":\"" + JsonEscape(dev.command_topic) + "\",";
     out_json += "\"status\":{";
     out_json += "\"online\":" + std::string(dev.status.online ? "true" : "false") + ",";
     out_json += "\"last_seen_ms\":" + std::to_string(dev.status.last_seen_ms) + ",";
-    out_json += "\"last_topic\":\"" + dev.status.last_topic + "\",";
-    out_json += "\"last_payload\":\"" + dev.status.last_payload + "\"";
+    out_json += "\"last_topic\":\"" + JsonEscape(dev.status.last_topic) + "\",";
+    out_json += "\"last_payload\":\"" + JsonEscape(dev.status.last_payload) + "\"";
     out_json += "}";
     out_json += "}";
     return true;

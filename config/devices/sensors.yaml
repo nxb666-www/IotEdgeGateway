@@ -1,0 +1,9 @@
+sensors:
+  - id: temp
+    protocol: mqtt
+  - id: humi
+    protocol: mqtt
+  - id: light
+    protocol: mqtt
+  - id: ir
+    protocol: mqtt

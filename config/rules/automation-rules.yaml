@@ -1,0 +1,25 @@
+# 自动化规则：传感器满足条件 → 自动控制执行器
+# 比如：温度太高 → 自动开风扇
+
+automation_rules:
+  - id: cooling_on              # 规则 ID，唯一标识
+    enabled: true               # 是否启用
+    when:                       # 条件
+      sensor_id: temp           # 哪个传感器
+      op: ">"                   # 运算符
+      value: 55                 # 阈值
+    then:                       # 动作
+      - type: actuator_set      # 控制执行器
+        actuator_id: motor      # 哪个执行器
+        value: "1"              # 设置值（1=开）
+
+  - id: cooling_off
+    enabled: true
+    when:
+      sensor_id: temp
+      op: "<"
+      value: 50
+    then:
+      - type: actuator_set
+        actuator_id: motor
+        value: "0"              # 0=关

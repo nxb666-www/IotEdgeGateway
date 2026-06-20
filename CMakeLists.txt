@@ -45,6 +45,10 @@ add_library(iotgw_common STATIC
     src/core/common/logger/file_logger.cpp
     src/core/common/config/config_manager.cpp
     src/core/device/manager/device_registry.cpp
+    src/core/device/protocol_adapters/mqtt_adapter/mqtt_client.cpp
+    src/services/web_services/api/device_api.cpp
+    src/services/web_services/api/rest_api.cpp
+    src/services/web_services/api/rule_api.cpp
     src/services/web_services/websocket/websocket_server.cpp
     src/gateway/gateway_core.cpp
 )

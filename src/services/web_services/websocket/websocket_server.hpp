@@ -10,7 +10,8 @@ class MongooseServer {
     friend void on_event(struct mg_connection*, int, void*);
 public:
     // 回调类型：HTTP 请求来了调这个
-    using HttpHandler = std::function<void(struct mg_connection*, struct mg_http_message*)>;
+    // 返回 true 表示已处理，false 表示交给静态文件服务
+    using HttpHandler = std::function<bool(struct mg_connection*, struct mg_http_message*)>;
     // 回调类型：WebSocket 消息来了调这个
     using WsHandler = std::function<void(struct mg_connection*, struct mg_ws_message*)>;
 
@@ -34,6 +35,8 @@ public:
     void SetWwwRoot(const std::string& path);   // 设置静态文件目录
 
     void BroadcastText(const std::string& msg); // WebSocket 广播
+
+    struct mg_mgr* GetMgr() { return &mgr_; }   // 返回管理器指针
 };
 
 #endif
