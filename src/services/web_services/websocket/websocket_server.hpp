@@ -21,6 +21,7 @@ private:
     std::string www_root_;         // 静态文件目录
     HttpHandler http_handler_;     // HTTP 回调
     WsHandler ws_handler_;         // WebSocket 回调
+    struct mg_connection* listener_;
 
 public:
     MongooseServer();

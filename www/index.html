@@ -83,7 +83,7 @@
             color: #1f2937;
         }
 
-        /* 视频区域 - 保留原样式，仅替换内部为video标签 */
+        /* 视频区域 */
         .video-box {
             width: 100%;
             background: #000;
@@ -98,10 +98,10 @@
             justify-content: center;
         }
 
-        .video-box video {
+        .video-box img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .video-bar {
@@ -303,23 +303,22 @@
 
     <div class="header">
         <div style="font-size: 20px; font-weight: 800; letter-spacing: 1px;">RK3568 智能网关控制系统</div>
-        <div class="status-tag" id="conn_status">● 设备在线</div>
+        <div class="status-tag" id="conn_status">设备在线</div>
     </div>
 
     <div class="main-grid">
         <!-- 左侧 -->
         <div class="column">
             <div class="card" style="flex: 1;">
-                <div class="card-title">🎥 实时画面监控</div>
+                <div class="card-title">实时画面监控</div>
                 <div class="video-box">
-                    <!-- 替换为video标签，移除原img -->
-                    <video id="videoPlayer" muted playsinline></video>
+                    <img id="videoPlayer" src="" alt="视频流">
                 </div>
                 <div class="video-bar">
-                    <button id="streamStartBtn" class="btn btn-stream-start">▶ 开始推流</button>
-                    <button id="streamStopBtn" class="btn btn-stream-stop" disabled>⏹ 停止推流</button>
-                    <button id="snapshotBtn" class="btn btn-cap">📸 抓拍照片</button>
-                    <button id="recordBtn" class="btn btn-rec">🔴 视频录制</button>
+                    <button id="streamStartBtn" class="btn btn-stream-start">开始推流</button>
+                    <button id="streamStopBtn" class="btn btn-stream-stop" disabled>停止推流</button>
+                    <button id="snapshotBtn" class="btn btn-cap">抓拍照片</button>
+                    <button id="recordBtn" class="btn btn-rec">视频录制</button>
                 </div>
             </div>
 
@@ -351,7 +350,7 @@
         <div class="column">
             <!-- 控制卡片 -->
             <div class="card">
-                <div class="card-title">⚙️ 硬件外设控制</div>
+                <div class="card-title">硬件外设控制</div>
 
                 <div class="control-item">
                     <div class="label-row"><span>LED 照明灯</span><label class="switch"><input type="checkbox" id="led_sw"
@@ -378,7 +377,7 @@
 
             <!-- 日志卡片 -->
             <div class="card" style="flex: 1; min-height: 0;">
-                <div class="card-title">📜 系统运行日志</div>
+                <div class="card-title">系统运行日志</div>
                 <div class="log-container" id="log_box">
                     <div class="log-line"><span class="log-time">[00:00:00]</span>系统初始化完成...</div>
                 </div>
@@ -386,12 +385,9 @@
         </div>
     </div>
 
-    <!-- 引入HLS.js -->
-    <script src="/js/hls.min.js"></script>
-
     <script>
         // ========== 视频流核心配置 ==========
-        const STREAM_URL = '/stream/stream.m3u8';
+        const LIVE_JPG_URL = '/stream/live.jpg';
         const API_START_STREAM = '/api/camera/start_stream';
         const API_STOP_STREAM = '/api/camera/stop_stream';
         const API_START_RECORD = '/api/camera/start_record';
@@ -401,7 +397,10 @@
         // 全局状态
         let streamStarted = false;
         let recordStarted = false;
-        let hlsInstance = null;
+        let frameTimer = null;
+        let frameTimeoutTimer = null;
+        let frameSeq = 0;
+        let frameLoading = false;
 
         // DOM元素
         const video = document.getElementById('videoPlayer');
@@ -436,44 +435,66 @@
             }
         }
 
+        function nextFrameUrl() {
+            return `${LIVE_JPG_URL}?t=${Date.now()}`;
+        }
+
+        function clearFrameTimeout() {
+            if (frameTimeoutTimer) {
+                clearTimeout(frameTimeoutTimer);
+                frameTimeoutTimer = null;
+            }
+        }
+
+        function scheduleNextFrame(delay) {
+            if (!streamStarted) return;
+            if (frameTimer) clearTimeout(frameTimer);
+            frameTimer = setTimeout(loadNextFrame, delay);
+        }
+
+        function loadNextFrame() {
+            if (!streamStarted || frameLoading) return;
+            const seq = ++frameSeq;
+            const img = new Image();
+            frameLoading = true;
+            clearFrameTimeout();
+            img.onload = () => {
+                if (streamStarted && seq === frameSeq) {
+                    video.src = img.src;
+                }
+                frameLoading = false;
+                clearFrameTimeout();
+                scheduleNextFrame(100);
+            };
+            img.onerror = () => {
+                frameLoading = false;
+                clearFrameTimeout();
+                scheduleNextFrame(300);
+            };
+            frameTimeoutTimer = setTimeout(() => {
+                if (streamStarted && seq === frameSeq) {
+                    frameLoading = false;
+                    scheduleNextFrame(300);
+                }
+            }, 1500);
+            img.src = nextFrameUrl();
+        }
+
         // ========== 视频流控制逻辑 ==========
         async function startStream() {
             if (streamStarted) return;
+            streamStarted = true;
+            streamStartBtn.disabled = true;
             try {
                 addLog('正在启动视频流...');
-                await sendCommand(API_START_STREAM);
-
-                if (Hls.isSupported()) {
-                    hlsInstance = new Hls();
-                    hlsInstance.loadSource(STREAM_URL);
-                    hlsInstance.attachMedia(video);
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-                        video.play().catch(e => {
-                            addLog(`自动播放被阻止: ${e.message}`);
-                            console.warn("Autoplay blocked:", e);
-                        });
-                        addLog('✅ 视频流已连接');
-                    });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = STREAM_URL;
-                    video.addEventListener('loadedmetadata', () => {
-                        video.play().catch(e => {
-                            addLog(`自动播放被阻止: ${e.message}`);
-                            console.warn("Autoplay blocked:", e);
-                        });
-                        addLog('✅ 视频流已连接（Safari）');
-                    });
-                } else {
-                    addLog('❌ 浏览器不支持HLS视频流');
-                    alert('❌ 浏览器不支持 HLS 视频流！');
-                    return;
-                }
-
-                streamStarted = true;
-                streamStartBtn.disabled = true;
+                const res = await sendCommand(API_START_STREAM);
+                addLog(`视频流已启动(${res.backend || 'ffmpeg'}), 正在获取画面...`);
+                loadNextFrame();
                 streamStopBtn.disabled = false;
             } catch (err) {
-                addLog(`❌ 视频流启动失败: ${err.message}`);
+                streamStarted = false;
+                streamStartBtn.disabled = false;
+                addLog(`视频流启动失败: ${err.message}`);
             }
         }
 
@@ -481,35 +502,33 @@
             if (!streamStarted) return;
             try {
                 addLog('正在停止视频流...');
-                if (hlsInstance) {
-                    hlsInstance.destroy();
-                    hlsInstance = null;
-                }
+                if (frameTimer) clearTimeout(frameTimer);
+                clearFrameTimeout();
+                frameLoading = false;
                 video.src = '';
-                await sendCommand(API_STOP_STREAM);
-
                 streamStarted = false;
                 streamStartBtn.disabled = false;
                 streamStopBtn.disabled = true;
-                addLog('⏹ 视频流已停止');
+                await sendCommand(API_STOP_STREAM);
+                addLog('视频流已停止');
             } catch (err) {
-                addLog(`⚠️ 停止视频流出错: ${err.message}`);
+                addLog(`停止视频流出错: ${err.message}`);
             }
         }
 
         async function takeSnapshot() {
             try {
                 addLog('正在拍照...');
-                await sendCommand(API_SNAPSHOT);
-                addLog('✅ 拍照成功！照片已保存至 snapshots/');
+                const res = await sendCommand(API_SNAPSHOT);
+                addLog(`拍照${res.result === 'ok' ? '成功' : '失败'}，文件: ${res.file || '/www'}`);
             } catch (err) {
-                addLog(`❌ 拍照失败: ${err.message}`);
+                addLog(`拍照失败: ${err.message}`);
             }
         }
 
         async function toggleRecord() {
             if (!streamStarted) {
-                addLog('❌ 请先启动视频流再进行录像');
+                addLog('请先启动视频流再进行录像');
                 return;
             }
 
@@ -517,23 +536,23 @@
                 // 开始录像
                 try {
                     addLog('正在启动录像...');
-                    await sendCommand(API_START_RECORD);
+                    const res = await sendCommand(API_START_RECORD);
                     recordStarted = true;
-                    recordBtn.innerHTML = '⏹ 停止录制';
-                    addLog('✅ 录像已开始');
+                    recordBtn.innerHTML = '停止录制';
+                    addLog(`录像已开始，文件: ${res.file || '/www'}`);
                 } catch (err) {
-                    addLog(`❌ 录像启动失败: ${err.message}`);
+                    addLog(`录像启动失败: ${err.message}`);
                 }
             } else {
                 // 停止录像
                 try {
                     addLog('正在停止录像...');
-                    await sendCommand(API_STOP_RECORD);
+                    const res = await sendCommand(API_STOP_RECORD);
                     recordStarted = false;
-                    recordBtn.innerHTML = '🔴 视频录制';
-                    addLog('✅ 录像已保存');
+                    recordBtn.innerHTML = '视频录制';
+                    addLog(`录像${res.result === 'ok' ? '已保存' : '保存失败'}，文件: ${res.file || '/www'}`);
                 } catch (err) {
-                    addLog(`⚠️ 停止录像出错: ${err.message}`);
+                    addLog(`停止录像出错: ${err.message}`);
                 }
             }
         }
@@ -582,7 +601,7 @@
 function setMotorDirUser(dir) {
     setMotorDirUI(dir);
     addLog(`电机方向切换: ${dir === 0 ? '正转' : '反转'}`);
-    cmd();   // ✅ 只有用户操作才发
+    cmd();   // 只有用户操作才发
 }
 
 
@@ -612,22 +631,14 @@ function setMotorDirUser(dir) {
                 document.getElementById('val_humi').innerText = data.humi || '--';
                 document.getElementById('val_light').innerText = data.light || '--';
                 const irBox = document.getElementById('val_ir');
-                irBox.innerText = data.ir>2000 ? "☢ 有人" : "安全";
+                irBox.innerText = data.ir>2000 ? "有人" : "安全";
                 irBox.style.color = data.ir ? "var(--danger)" : "var(--success)";
 
-                // 同步硬件状态到前端控件
-                document.getElementById('led_sw').checked = data.led_on === 1;
-                document.getElementById('led_br').value = data.led_br || 50;
-                document.getElementById('motor_sw').checked = data.motor_on === 1;
-                document.getElementById('motor_sp').value = data.motor_sp || 30;
-                setMotorDirUI(data.motor_dir);
-                document.getElementById('buzzer_sw').checked = data.buzzer === 1;
-
                 // 恢复连接状态
-                document.getElementById('conn_status').innerText = "● 设备在线";
+                document.getElementById('conn_status').innerText = "设备在线";
                 document.getElementById('conn_status').style.color = "#fff";
             }).catch(e => {
-                document.getElementById('conn_status').innerText = "● 连接断开";
+                document.getElementById('conn_status').innerText = "连接断开";
                 document.getElementById('conn_status').style.color = "#ff4d4d";
                 addLog(`传感器数据获取失败: ${e.message}`);
             });

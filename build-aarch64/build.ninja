@@ -55,8 +55,6 @@ build CMakeFiles/mongoose_lib.dir/build/_deps/mongoose-src/mongoose.c.o: C_COMPI
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src
   OBJECT_DIR = CMakeFiles/mongoose_lib.dir
   OBJECT_FILE_DIR = CMakeFiles/mongoose_lib.dir/build/_deps/mongoose-src
-  TARGET_COMPILE_PDB = CMakeFiles/mongoose_lib.dir/mongoose_lib.pdb
-  TARGET_PDB = libmongoose_lib.pdb
 
 
 # =============================================================================
@@ -71,9 +69,8 @@ build libmongoose_lib.a: C_STATIC_LIBRARY_LINKER__mongoose_lib_Debug CMakeFiles/
   OBJECT_DIR = CMakeFiles/mongoose_lib.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/mongoose_lib.dir/mongoose_lib.pdb
   TARGET_FILE = libmongoose_lib.a
-  TARGET_PDB = libmongoose_lib.pdb
+  TARGET_PDB = mongoose_lib.a.dbg
 
 # =============================================================================
 # Object build statements for STATIC_LIBRARY target iotgw_common
@@ -90,8 +87,6 @@ build CMakeFiles/iotgw_common.dir/src/core/common/logger/file_logger.cpp.o: CXX_
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/core/common/logger
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
-  TARGET_PDB = libiotgw_common.pdb
 
 build CMakeFiles/iotgw_common.dir/src/core/common/config/config_manager.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/core/common/config/config_manager.cpp || cmake_object_order_depends_target_iotgw_common
   DEP_FILE = CMakeFiles/iotgw_common.dir/src/core/common/config/config_manager.cpp.o.d
@@ -99,8 +94,6 @@ build CMakeFiles/iotgw_common.dir/src/core/common/config/config_manager.cpp.o: C
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/core/common/config
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
-  TARGET_PDB = libiotgw_common.pdb
 
 build CMakeFiles/iotgw_common.dir/src/core/device/manager/device_registry.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/core/device/manager/device_registry.cpp || cmake_object_order_depends_target_iotgw_common
   DEP_FILE = CMakeFiles/iotgw_common.dir/src/core/device/manager/device_registry.cpp.o.d
@@ -108,8 +101,6 @@ build CMakeFiles/iotgw_common.dir/src/core/device/manager/device_registry.cpp.o:
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/core/device/manager
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
-  TARGET_PDB = libiotgw_common.pdb
 
 build CMakeFiles/iotgw_common.dir/src/core/device/protocol_adapters/mqtt_adapter/mqtt_client.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/core/device/protocol_adapters/mqtt_adapter/mqtt_client.cpp || cmake_object_order_depends_target_iotgw_common
   DEP_FILE = CMakeFiles/iotgw_common.dir/src/core/device/protocol_adapters/mqtt_adapter/mqtt_client.cpp.o.d
@@ -117,8 +108,6 @@ build CMakeFiles/iotgw_common.dir/src/core/device/protocol_adapters/mqtt_adapter
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/core/device/protocol_adapters/mqtt_adapter
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
-  TARGET_PDB = libiotgw_common.pdb
 
 build CMakeFiles/iotgw_common.dir/src/services/web_services/api/device_api.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/services/web_services/api/device_api.cpp || cmake_object_order_depends_target_iotgw_common
   DEP_FILE = CMakeFiles/iotgw_common.dir/src/services/web_services/api/device_api.cpp.o.d
@@ -126,8 +115,6 @@ build CMakeFiles/iotgw_common.dir/src/services/web_services/api/device_api.cpp.o
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/services/web_services/api
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
-  TARGET_PDB = libiotgw_common.pdb
 
 build CMakeFiles/iotgw_common.dir/src/services/web_services/api/rest_api.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/services/web_services/api/rest_api.cpp || cmake_object_order_depends_target_iotgw_common
   DEP_FILE = CMakeFiles/iotgw_common.dir/src/services/web_services/api/rest_api.cpp.o.d
@@ -135,8 +122,20 @@ build CMakeFiles/iotgw_common.dir/src/services/web_services/api/rest_api.cpp.o: 
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/services/web_services/api
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
-  TARGET_PDB = libiotgw_common.pdb
+
+build CMakeFiles/iotgw_common.dir/src/services/web_services/api/rule_api.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/services/web_services/api/rule_api.cpp || cmake_object_order_depends_target_iotgw_common
+  DEP_FILE = CMakeFiles/iotgw_common.dir/src/services/web_services/api/rule_api.cpp.o.d
+  FLAGS = -g -std=gnu++14
+  INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
+  OBJECT_DIR = CMakeFiles/iotgw_common.dir
+  OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/services/web_services/api
+
+build CMakeFiles/iotgw_common.dir/src/services/web_services/api/camera_api.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/services/web_services/api/camera_api.cpp || cmake_object_order_depends_target_iotgw_common
+  DEP_FILE = CMakeFiles/iotgw_common.dir/src/services/web_services/api/camera_api.cpp.o.d
+  FLAGS = -g -std=gnu++14
+  INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
+  OBJECT_DIR = CMakeFiles/iotgw_common.dir
+  OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/services/web_services/api
 
 build CMakeFiles/iotgw_common.dir/src/services/web_services/websocket/websocket_server.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/services/web_services/websocket/websocket_server.cpp || cmake_object_order_depends_target_iotgw_common
   DEP_FILE = CMakeFiles/iotgw_common.dir/src/services/web_services/websocket/websocket_server.cpp.o.d
@@ -144,8 +143,6 @@ build CMakeFiles/iotgw_common.dir/src/services/web_services/websocket/websocket_
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/services/web_services/websocket
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
-  TARGET_PDB = libiotgw_common.pdb
 
 build CMakeFiles/iotgw_common.dir/src/gateway/gateway_core.cpp.o: CXX_COMPILER__iotgw_common_Debug /home/nie/IotEdgeGateway/src/gateway/gateway_core.cpp || cmake_object_order_depends_target_iotgw_common
   DEP_FILE = CMakeFiles/iotgw_common.dir/src/gateway/gateway_core.cpp.o.d
@@ -153,8 +150,6 @@ build CMakeFiles/iotgw_common.dir/src/gateway/gateway_core.cpp.o: CXX_COMPILER__
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_common.dir/src/gateway
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
-  TARGET_PDB = libiotgw_common.pdb
 
 
 # =============================================================================
@@ -164,14 +159,13 @@ build CMakeFiles/iotgw_common.dir/src/gateway/gateway_core.cpp.o: CXX_COMPILER__
 #############################################
 # Link the static library libiotgw_common.a
 
-build libiotgw_common.a: CXX_STATIC_LIBRARY_LINKER__iotgw_common_Debug CMakeFiles/iotgw_common.dir/src/core/common/logger/file_logger.cpp.o CMakeFiles/iotgw_common.dir/src/core/common/config/config_manager.cpp.o CMakeFiles/iotgw_common.dir/src/core/device/manager/device_registry.cpp.o CMakeFiles/iotgw_common.dir/src/core/device/protocol_adapters/mqtt_adapter/mqtt_client.cpp.o CMakeFiles/iotgw_common.dir/src/services/web_services/api/device_api.cpp.o CMakeFiles/iotgw_common.dir/src/services/web_services/api/rest_api.cpp.o CMakeFiles/iotgw_common.dir/src/services/web_services/websocket/websocket_server.cpp.o CMakeFiles/iotgw_common.dir/src/gateway/gateway_core.cpp.o || _deps/rapidyaml-build/libryml.a libmongoose_lib.a
+build libiotgw_common.a: CXX_STATIC_LIBRARY_LINKER__iotgw_common_Debug CMakeFiles/iotgw_common.dir/src/core/common/logger/file_logger.cpp.o CMakeFiles/iotgw_common.dir/src/core/common/config/config_manager.cpp.o CMakeFiles/iotgw_common.dir/src/core/device/manager/device_registry.cpp.o CMakeFiles/iotgw_common.dir/src/core/device/protocol_adapters/mqtt_adapter/mqtt_client.cpp.o CMakeFiles/iotgw_common.dir/src/services/web_services/api/device_api.cpp.o CMakeFiles/iotgw_common.dir/src/services/web_services/api/rest_api.cpp.o CMakeFiles/iotgw_common.dir/src/services/web_services/api/rule_api.cpp.o CMakeFiles/iotgw_common.dir/src/services/web_services/api/camera_api.cpp.o CMakeFiles/iotgw_common.dir/src/services/web_services/websocket/websocket_server.cpp.o CMakeFiles/iotgw_common.dir/src/gateway/gateway_core.cpp.o || _deps/rapidyaml-build/libryml.a libmongoose_lib.a
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/iotgw_common.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_common.dir/iotgw_common.pdb
   TARGET_FILE = libiotgw_common.a
-  TARGET_PDB = libiotgw_common.pdb
+  TARGET_PDB = iotgw_common.a.dbg
 
 # =============================================================================
 # Object build statements for EXECUTABLE target iotgw_gateway
@@ -188,8 +182,6 @@ build CMakeFiles/iotgw_gateway.dir/src/gateway/main.cpp.o: CXX_COMPILER__iotgw_g
   INCLUDES = -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = CMakeFiles/iotgw_gateway.dir
   OBJECT_FILE_DIR = CMakeFiles/iotgw_gateway.dir/src/gateway
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_gateway.dir/
-  TARGET_PDB = iotgw_gateway.pdb
 
 
 # =============================================================================
@@ -206,9 +198,42 @@ build iotgw_gateway: CXX_EXECUTABLE_LINKER__iotgw_gateway_Debug CMakeFiles/iotgw
   OBJECT_DIR = CMakeFiles/iotgw_gateway.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/iotgw_gateway.dir/
   TARGET_FILE = iotgw_gateway
-  TARGET_PDB = iotgw_gateway.pdb
+  TARGET_PDB = iotgw_gateway.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target iotgw_mqtt_broker
+
+
+#############################################
+# Order-only phony target for iotgw_mqtt_broker
+
+build cmake_object_order_depends_target_iotgw_mqtt_broker: phony || cmake_object_order_depends_target_mongoose_lib
+
+build CMakeFiles/iotgw_mqtt_broker.dir/src/tools/mqtt_broker/main.c.o: C_COMPILER__iotgw_mqtt_broker_Debug /home/nie/IotEdgeGateway/src/tools/mqtt_broker/main.c || cmake_object_order_depends_target_iotgw_mqtt_broker
+  DEP_FILE = CMakeFiles/iotgw_mqtt_broker.dir/src/tools/mqtt_broker/main.c.o.d
+  FLAGS = -g
+  INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src
+  OBJECT_DIR = CMakeFiles/iotgw_mqtt_broker.dir
+  OBJECT_FILE_DIR = CMakeFiles/iotgw_mqtt_broker.dir/src/tools/mqtt_broker
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target iotgw_mqtt_broker
+
+
+#############################################
+# Link the executable iotgw_mqtt_broker
+
+build iotgw_mqtt_broker: C_EXECUTABLE_LINKER__iotgw_mqtt_broker_Debug CMakeFiles/iotgw_mqtt_broker.dir/src/tools/mqtt_broker/main.c.o | libmongoose_lib.a || libmongoose_lib.a
+  FLAGS = -g
+  LINK_FLAGS = -static-libstdc++ -static-libgcc
+  LINK_LIBRARIES = libmongoose_lib.a
+  OBJECT_DIR = CMakeFiles/iotgw_mqtt_broker.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = iotgw_mqtt_broker
+  TARGET_PDB = iotgw_mqtt_broker.dbg
 
 
 #############################################
@@ -295,8 +320,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/common.cpp.o: CXX_COM
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/node.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/node.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/node.cpp.o.d
@@ -304,8 +327,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/node.cpp.o: CXX_COMPI
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/node_type.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/node_type.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/node_type.cpp.o.d
@@ -313,8 +334,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/node_type.cpp.o: CXX_
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/parse.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/parse.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/parse.cpp.o.d
@@ -322,8 +341,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/parse.cpp.o: CXX_COMP
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/preprocess.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/preprocess.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/preprocess.cpp.o.d
@@ -331,8 +348,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/preprocess.cpp.o: CXX
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/reference_resolver.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/reference_resolver.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/reference_resolver.cpp.o.d
@@ -340,8 +355,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/reference_resolver.cp
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/tag.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/tag.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/tag.cpp.o.d
@@ -349,8 +362,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/tag.cpp.o: CXX_COMPIL
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/tree.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/tree.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/tree.cpp.o.d
@@ -358,8 +369,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/tree.cpp.o: CXX_COMPI
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/version.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src/c4/yml/version.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/version.cpp.o.d
@@ -367,8 +376,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml/version.cpp.o: CXX_CO
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/src/c4/yml
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/base64.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/base64.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/base64.cpp.o.d
@@ -376,8 +383,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/base64.cpp.o: 
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/char_traits.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/char_traits.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/char_traits.cpp.o.d
@@ -385,8 +390,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/char_traits.cp
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/error.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/error.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/error.cpp.o.d
@@ -394,8 +397,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/error.cpp.o: C
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/format.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/format.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/format.cpp.o.d
@@ -403,8 +404,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/format.cpp.o: 
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/language.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/language.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/language.cpp.o.d
@@ -412,8 +411,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/language.cpp.o
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/memory_resource.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_resource.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/memory_resource.cpp.o.d
@@ -421,8 +418,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/memory_resourc
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/memory_util.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_util.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/memory_util.cpp.o.d
@@ -430,8 +425,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/memory_util.cp
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/utf.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/utf.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/utf.cpp.o.d
@@ -439,8 +432,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/utf.cpp.o: CXX
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/version.cpp.o: CXX_COMPILER__ryml_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/version.cpp || cmake_object_order_depends_target_ryml
   DEP_FILE = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/version.cpp.o.d
@@ -448,8 +439,6 @@ build _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4/version.cpp.o:
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ext/c4core/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
 
 
 # =============================================================================
@@ -464,9 +453,8 @@ build _deps/rapidyaml-build/libryml.a: CXX_STATIC_LIBRARY_LINKER__ryml_Debug _de
   OBJECT_DIR = _deps/rapidyaml-build/CMakeFiles/ryml.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/CMakeFiles/ryml.dir/ryml.pdb
   TARGET_FILE = _deps/rapidyaml-build/libryml.a
-  TARGET_PDB = _deps/rapidyaml-build/libryml.pdb
+  TARGET_PDB = ryml.a.dbg
 
 
 #############################################
@@ -572,8 +560,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/char_traits.cpp.o: CXX_COMPILER__c4core_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/char_traits.cpp || cmake_object_order_depends_target_c4core
   DEP_FILE = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/char_traits.cpp.o.d
@@ -581,8 +567,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/error.cpp.o: CXX_COMPILER__c4core_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/error.cpp || cmake_object_order_depends_target_c4core
   DEP_FILE = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/error.cpp.o.d
@@ -590,8 +574,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/format.cpp.o: CXX_COMPILER__c4core_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/format.cpp || cmake_object_order_depends_target_c4core
   DEP_FILE = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/format.cpp.o.d
@@ -599,8 +581,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/language.cpp.o: CXX_COMPILER__c4core_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/language.cpp || cmake_object_order_depends_target_c4core
   DEP_FILE = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/language.cpp.o.d
@@ -608,8 +588,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/memory_resource.cpp.o: CXX_COMPILER__c4core_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_resource.cpp || cmake_object_order_depends_target_c4core
   DEP_FILE = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/memory_resource.cpp.o.d
@@ -617,8 +595,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/memory_util.cpp.o: CXX_COMPILER__c4core_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/memory_util.cpp || cmake_object_order_depends_target_c4core
   DEP_FILE = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/memory_util.cpp.o.d
@@ -626,8 +602,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/utf.cpp.o: CXX_COMPILER__c4core_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/utf.cpp || cmake_object_order_depends_target_c4core
   DEP_FILE = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/utf.cpp.o.d
@@ -635,8 +609,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/version.cpp.o: CXX_COMPILER__c4core_Debug /home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src/c4/version.cpp || cmake_object_order_depends_target_c4core
   DEP_FILE = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4/version.cpp.o.d
@@ -644,8 +616,6 @@ build _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c
   INCLUDES = -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   OBJECT_FILE_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/src/c4
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
 
 
 # =============================================================================
@@ -660,9 +630,8 @@ build _deps/rapidyaml-build/subprojects/c4core/build/libc4core.a: CXX_STATIC_LIB
   OBJECT_DIR = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = _deps/rapidyaml-build/subprojects/c4core/build/CMakeFiles/c4core.dir/c4core.pdb
   TARGET_FILE = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.a
-  TARGET_PDB = _deps/rapidyaml-build/subprojects/c4core/build/libc4core.pdb
+  TARGET_PDB = c4core.a.dbg
 
 
 #############################################
@@ -765,7 +734,7 @@ build ryml-uninstall: phony _deps/rapidyaml-build/ryml-uninstall
 #############################################
 # Folder: /home/nie/IotEdgeGateway/build-aarch64
 
-build all: phony libmongoose_lib.a libiotgw_common.a iotgw_gateway _deps/rapidyaml-build/all
+build all: phony libmongoose_lib.a libiotgw_common.a iotgw_gateway iotgw_mqtt_broker _deps/rapidyaml-build/all
 
 # =============================================================================
 
@@ -788,14 +757,14 @@ build _deps/rapidyaml-build/subprojects/c4core/build/all: phony _deps/rapidyaml-
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | ../CMakeLists.txt ../build/_deps/rapidyaml-src/CMakeLists.txt ../build/_deps/rapidyaml-src/compat.cmake ../build/_deps/rapidyaml-src/ext/c4core/CMakeLists.txt ../build/_deps/rapidyaml-src/ext/c4core/cmake/ConfigurationTypes.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/CreateSourceGroup.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/GetFlags.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PVS-Studio.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PatchUtils.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PrintVar.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4CatSources.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4Doxygen.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4GetTargetPropertyRecursive.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4Project.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4StaticAnalysis.cmake ../build/_deps/rapidyaml-src/ext/c4core/compat.cmake ../cmake/toolchain-aarch64.cmake ../cmake/version.hpp.in /usr/share/cmake-3.22/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in /usr/share/cmake-3.22/Modules/CMakeCCompiler.cmake.in /usr/share/cmake-3.22/Modules/CMakeCCompilerABI.c /usr/share/cmake-3.22/Modules/CMakeCInformation.cmake /usr/share/cmake-3.22/Modules/CMakeCXXCompiler.cmake.in /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp /usr/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /usr/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake-3.22/Modules/CMakeCompilerIdDetection.cmake /usr/share/cmake-3.22/Modules/CMakeDependentOption.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCXXCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCompileFeatures.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCompilerABI.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCompilerId.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineSystem.cmake /usr/share/cmake-3.22/Modules/CMakeFindBinUtils.cmake /usr/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /usr/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /usr/share/cmake-3.22/Modules/CMakeNinjaFindMake.cmake /usr/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake /usr/share/cmake-3.22/Modules/CMakeParseImplicitIncludeInfo.cmake /usr/share/cmake-3.22/Modules/CMakeParseImplicitLinkInfo.cmake /usr/share/cmake-3.22/Modules/CMakeParseLibraryArchitecture.cmake /usr/share/cmake-3.22/Modules/CMakeSystem.cmake.in /usr/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake-3.22/Modules/CMakeTestCCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeTestCXXCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeTestCompilerCommon.cmake /usr/share/cmake-3.22/Modules/Compiler/ADSP-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/ARMCC-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/ARMClang-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/AppleClang-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Borland-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Bruce-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake-3.22/Modules/Compiler/Clang-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Clang-DetermineCompilerInternal.cmake /usr/share/cmake-3.22/Modules/Compiler/Comeau-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Compaq-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Compaq-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Cray-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Embarcadero-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Fujitsu-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/GHS-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-C.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-FindBinUtils.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU.cmake /usr/share/cmake-3.22/Modules/Compiler/HP-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/HP-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/IAR-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake /usr/share/cmake-3.22/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake /usr/share/cmake-3.22/Modules/Compiler/Intel-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/MSVC-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/NVHPC-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/NVIDIA-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/PGI-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/PathScale-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/SCO-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/SDCC-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/SunPro-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/SunPro-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/TI-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/VisualAge-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Watcom-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/XL-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/XL-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/XLClang-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/XLClang-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/zOS-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/FetchContent.cmake /usr/share/cmake-3.22/Modules/Internal/FeatureTesting.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-Determine-CXX.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU.cmake /usr/share/cmake-3.22/Modules/Platform/Linux.cmake /usr/share/cmake-3.22/Modules/Platform/UnixPaths.cmake /usr/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake CMakeCache.txt CMakeFiles/3.22.1/CMakeCCompiler.cmake CMakeFiles/3.22.1/CMakeCXXCompiler.cmake CMakeFiles/3.22.1/CMakeSystem.cmake _deps/rapidyaml-build/export_cases/lib/cmake/ryml/rymlConfig.cmake.in _deps/rapidyaml-build/subprojects/c4core/build/export_cases/lib/cmake/c4core/c4coreConfig.cmake.in
+build build.ninja: RERUN_CMAKE | ../CMakeLists.txt ../build/_deps/rapidyaml-src/CMakeLists.txt ../build/_deps/rapidyaml-src/compat.cmake ../build/_deps/rapidyaml-src/ext/c4core/CMakeLists.txt ../build/_deps/rapidyaml-src/ext/c4core/cmake/ConfigurationTypes.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/CreateSourceGroup.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/GetFlags.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PVS-Studio.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PatchUtils.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PrintVar.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4CatSources.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4Doxygen.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4GetTargetPropertyRecursive.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4Project.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4StaticAnalysis.cmake ../build/_deps/rapidyaml-src/ext/c4core/compat.cmake ../cmake/toolchain-aarch64.cmake ../cmake/version.hpp.in /usr/share/cmake-3.22/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in /usr/share/cmake-3.22/Modules/CMakeCInformation.cmake /usr/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /usr/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake-3.22/Modules/CMakeDependentOption.cmake /usr/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /usr/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /usr/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake /usr/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-C.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU.cmake /usr/share/cmake-3.22/Modules/FetchContent.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU.cmake /usr/share/cmake-3.22/Modules/Platform/Linux.cmake /usr/share/cmake-3.22/Modules/Platform/UnixPaths.cmake /usr/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake CMakeCache.txt CMakeFiles/3.22.1/CMakeCCompiler.cmake CMakeFiles/3.22.1/CMakeCXXCompiler.cmake CMakeFiles/3.22.1/CMakeSystem.cmake _deps/rapidyaml-build/export_cases/lib/cmake/ryml/rymlConfig.cmake.in _deps/rapidyaml-build/subprojects/c4core/build/export_cases/lib/cmake/c4core/c4coreConfig.cmake.in
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build ../CMakeLists.txt ../build/_deps/rapidyaml-src/CMakeLists.txt ../build/_deps/rapidyaml-src/compat.cmake ../build/_deps/rapidyaml-src/ext/c4core/CMakeLists.txt ../build/_deps/rapidyaml-src/ext/c4core/cmake/ConfigurationTypes.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/CreateSourceGroup.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/GetFlags.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PVS-Studio.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PatchUtils.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PrintVar.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4CatSources.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4Doxygen.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4GetTargetPropertyRecursive.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4Project.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4StaticAnalysis.cmake ../build/_deps/rapidyaml-src/ext/c4core/compat.cmake ../cmake/toolchain-aarch64.cmake ../cmake/version.hpp.in /usr/share/cmake-3.22/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in /usr/share/cmake-3.22/Modules/CMakeCCompiler.cmake.in /usr/share/cmake-3.22/Modules/CMakeCCompilerABI.c /usr/share/cmake-3.22/Modules/CMakeCInformation.cmake /usr/share/cmake-3.22/Modules/CMakeCXXCompiler.cmake.in /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp /usr/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /usr/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake-3.22/Modules/CMakeCompilerIdDetection.cmake /usr/share/cmake-3.22/Modules/CMakeDependentOption.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCXXCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCompileFeatures.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCompilerABI.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineCompilerId.cmake /usr/share/cmake-3.22/Modules/CMakeDetermineSystem.cmake /usr/share/cmake-3.22/Modules/CMakeFindBinUtils.cmake /usr/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /usr/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /usr/share/cmake-3.22/Modules/CMakeNinjaFindMake.cmake /usr/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake /usr/share/cmake-3.22/Modules/CMakeParseImplicitIncludeInfo.cmake /usr/share/cmake-3.22/Modules/CMakeParseImplicitLinkInfo.cmake /usr/share/cmake-3.22/Modules/CMakeParseLibraryArchitecture.cmake /usr/share/cmake-3.22/Modules/CMakeSystem.cmake.in /usr/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake-3.22/Modules/CMakeTestCCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeTestCXXCompiler.cmake /usr/share/cmake-3.22/Modules/CMakeTestCompilerCommon.cmake /usr/share/cmake-3.22/Modules/Compiler/ADSP-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/ARMCC-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/ARMClang-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/AppleClang-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Borland-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Bruce-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake-3.22/Modules/Compiler/Clang-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Clang-DetermineCompilerInternal.cmake /usr/share/cmake-3.22/Modules/Compiler/Comeau-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Compaq-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Compaq-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Cray-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Embarcadero-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Fujitsu-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/GHS-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-C.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-FindBinUtils.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU.cmake /usr/share/cmake-3.22/Modules/Compiler/HP-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/HP-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/IAR-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake /usr/share/cmake-3.22/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake /usr/share/cmake-3.22/Modules/Compiler/Intel-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/MSVC-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/NVHPC-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/NVIDIA-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/PGI-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/PathScale-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/SCO-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/SDCC-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/SunPro-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/SunPro-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/TI-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/VisualAge-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/Watcom-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/XL-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/XL-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/XLClang-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/XLClang-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/zOS-C-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake /usr/share/cmake-3.22/Modules/FetchContent.cmake /usr/share/cmake-3.22/Modules/Internal/FeatureTesting.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-Determine-CXX.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU.cmake /usr/share/cmake-3.22/Modules/Platform/Linux.cmake /usr/share/cmake-3.22/Modules/Platform/UnixPaths.cmake /usr/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake CMakeCache.txt CMakeFiles/3.22.1/CMakeCCompiler.cmake CMakeFiles/3.22.1/CMakeCXXCompiler.cmake CMakeFiles/3.22.1/CMakeSystem.cmake _deps/rapidyaml-build/export_cases/lib/cmake/ryml/rymlConfig.cmake.in _deps/rapidyaml-build/subprojects/c4core/build/export_cases/lib/cmake/c4core/c4coreConfig.cmake.in: phony
+build ../CMakeLists.txt ../build/_deps/rapidyaml-src/CMakeLists.txt ../build/_deps/rapidyaml-src/compat.cmake ../build/_deps/rapidyaml-src/ext/c4core/CMakeLists.txt ../build/_deps/rapidyaml-src/ext/c4core/cmake/ConfigurationTypes.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/CreateSourceGroup.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/GetFlags.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PVS-Studio.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PatchUtils.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/PrintVar.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4CatSources.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4Doxygen.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4GetTargetPropertyRecursive.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4Project.cmake ../build/_deps/rapidyaml-src/ext/c4core/cmake/c4StaticAnalysis.cmake ../build/_deps/rapidyaml-src/ext/c4core/compat.cmake ../cmake/toolchain-aarch64.cmake ../cmake/version.hpp.in /usr/share/cmake-3.22/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in /usr/share/cmake-3.22/Modules/CMakeCInformation.cmake /usr/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /usr/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake-3.22/Modules/CMakeDependentOption.cmake /usr/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /usr/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /usr/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake /usr/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-C.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake /usr/share/cmake-3.22/Modules/Compiler/GNU.cmake /usr/share/cmake-3.22/Modules/FetchContent.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake-3.22/Modules/Platform/Linux-GNU.cmake /usr/share/cmake-3.22/Modules/Platform/Linux.cmake /usr/share/cmake-3.22/Modules/Platform/UnixPaths.cmake /usr/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake CMakeCache.txt CMakeFiles/3.22.1/CMakeCCompiler.cmake CMakeFiles/3.22.1/CMakeCXXCompiler.cmake CMakeFiles/3.22.1/CMakeSystem.cmake _deps/rapidyaml-build/export_cases/lib/cmake/ryml/rymlConfig.cmake.in _deps/rapidyaml-build/subprojects/c4core/build/export_cases/lib/cmake/c4core/c4coreConfig.cmake.in: phony
 
 
 #############################################

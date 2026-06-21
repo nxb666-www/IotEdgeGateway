@@ -26,7 +26,7 @@ void on_event(mg_connection* c, int ev, void* ev_data) {
 }
 
 MongooseServer::MongooseServer()
-:running_(false)
+:running_(false), listener_(nullptr)
 {
     mg_mgr_init(&mgr_);
 }
@@ -35,7 +35,11 @@ MongooseServer::~MongooseServer(){
 }
 // 启动服务器，监听地址
 bool MongooseServer::Start(const std::string& addr){
-    mg_http_listen(&mgr_,addr.c_str(),on_event,this);
+    listener_ = mg_http_listen(&mgr_,addr.c_str(),on_event,this);
+    if (listener_ == nullptr) {
+        running_ = false;
+        return false;
+    }
     running_ = true;
     return true;
 }  
@@ -45,7 +49,9 @@ void MongooseServer::Poll(int timeout_ms){
 }             
 // 停止服务器
 void MongooseServer::Stop(){
+    if (!running_ && listener_ == nullptr) return;
     running_ = false;
+    listener_ = nullptr;
     mg_mgr_free(&mgr_);
 }            
 // 设置 HTTP 回调

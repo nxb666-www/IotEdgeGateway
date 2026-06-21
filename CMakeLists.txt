@@ -49,6 +49,7 @@ add_library(iotgw_common STATIC
     src/services/web_services/api/device_api.cpp
     src/services/web_services/api/rest_api.cpp
     src/services/web_services/api/rule_api.cpp
+    src/services/web_services/api/camera_api.cpp
     src/services/web_services/websocket/websocket_server.cpp
     src/gateway/gateway_core.cpp
 )
@@ -67,4 +68,11 @@ add_executable(iotgw_gateway
 )
 target_link_libraries(iotgw_gateway PRIVATE
     iotgw_common
+)
+
+add_executable(iotgw_mqtt_broker
+    src/tools/mqtt_broker/main.c
+)
+target_link_libraries(iotgw_mqtt_broker PRIVATE
+    mongoose_lib
 )

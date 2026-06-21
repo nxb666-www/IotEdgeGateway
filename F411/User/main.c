@@ -10,39 +10,69 @@
 #include "PWM.h"
 #include "protocol.h"
 
+static void ProcessCommand(void)
+{
+    if (flag == 1)
+    {
+        Protocol_ParseAndExecute((char*)message);
+        flag = 0;
+    }
+}
+
+static void WaitAndProcess(uint16_t ms)
+{
+    while (ms--)
+    {
+        ProcessCommand();
+        Delay_ms(1);
+    }
+}
+
 int main(void)
 {
-    // 1. 初始化PWM（电机）
-    TIM1_PWM_Init();   // 电机 PWM (PA8)
+    TIM1_PWM_Init();
 
-    // 2. 初始化外设
     LED_Init();
-    LED1_ON();
     Motor_Init();
+    TIM2_PWM_Init();
+
     AHT30_Init();
     LightSensor_Init();
     Buzzer_Init();
     Infrared_Init();
     USART1_Init();
 
-    // 3. 测试串口
     Send_Str((uint8_t *)"STM32 Ready\r\n");
 
-    while(1)
+    uint16_t aht30_ms = 2000;
+    uint16_t light_ms = 200;
+    uint16_t infrared_ms = 200;
+
+    while (1)
     {
-        // 4. 处理串口收到的JSON命令
-        if (flag == 1)
+        ProcessCommand();
+
+        if (aht30_ms >= 2000)
         {
-            Protocol_ParseAndExecute((char*)message);
-            flag = 0;
+            aht30_ms = 0;
+            Protocol_UploadAHT30();
         }
 
-        // 5. 轮流上传传感器数据（每个间隔2秒）
-        Delay_s(2);
-        Protocol_UploadAHT30();
-        Delay_s(2);
-        Protocol_UploadLightSensor();
-        Delay_s(2);
-        Protocol_UploadInfrared();
+        if (light_ms >= 200)
+        {
+            light_ms = 0;
+            Protocol_UploadLightSensor();
+        }
+
+        if (infrared_ms >= 200)
+        {
+            infrared_ms = 0;
+            Protocol_UploadInfrared();
+        }
+
+        WaitAndProcess(10);
+        aht30_ms += 10;
+        light_ms += 10;
+        infrared_ms += 10;
     }
 }

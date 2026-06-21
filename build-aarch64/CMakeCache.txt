@@ -276,8 +276,8 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 //Path to a program.
 CMAKE_STRIP:FILEPATH=/usr/bin/aarch64-linux-gnu-strip
 
-//The CMake toolchain file
-CMAKE_TOOLCHAIN_FILE:FILEPATH=/home/nie/IotEdgeGateway/cmake/toolchain-aarch64.cmake
+//No help, variable specified on the command line.
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=cmake/toolchain-aarch64.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -314,9 +314,6 @@ IotEdgeGateway_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 IotEdgeGateway_SOURCE_DIR:STATIC=/home/nie/IotEdgeGateway
-
-//Enable API generation (python, etc)
-RYML_BUILD_API:BOOL=OFF
 
 //Build tools
 RYML_BUILD_TOOLS:BOOL=OFF
@@ -527,4 +524,6 @@ CMAKE_STRIP-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Enable API generation (python, etc)
+RYML_BUILD_API:INTERNAL=OFF
 

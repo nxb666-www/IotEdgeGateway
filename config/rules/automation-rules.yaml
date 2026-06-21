@@ -11,7 +11,7 @@ automation_rules:
     then:                       # 动作
       - type: actuator_set      # 控制执行器
         actuator_id: motor      # 哪个执行器
-        value: "1"              # 设置值（1=开）
+        value: '{"on":1}'       # 开电机（ESP32 会映射为 motor_on:1）
 
   - id: cooling_off
     enabled: true
@@ -22,4 +22,4 @@ automation_rules:
     then:
       - type: actuator_set
         actuator_id: motor
-        value: "0"              # 0=关
+        value: '{"on":0}'       # 关电机

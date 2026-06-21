@@ -20,3 +20,11 @@ codex_vm_key.pub
 # 系统文件
 .DS_Store
 Thumbs.db
+
+.codex_tmp/
+
+build-aarch64/
+
+build/
+
+*.bak

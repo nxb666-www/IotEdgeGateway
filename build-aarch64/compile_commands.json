@@ -36,6 +36,16 @@
 },
 {
   "directory": "/home/nie/IotEdgeGateway/build-aarch64",
+  "command": "/usr/bin/aarch64-linux-gnu-g++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_common.dir/src/services/web_services/api/rule_api.cpp.o -c /home/nie/IotEdgeGateway/src/services/web_services/api/rule_api.cpp",
+  "file": "/home/nie/IotEdgeGateway/src/services/web_services/api/rule_api.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build-aarch64",
+  "command": "/usr/bin/aarch64-linux-gnu-g++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_common.dir/src/services/web_services/api/camera_api.cpp.o -c /home/nie/IotEdgeGateway/src/services/web_services/api/camera_api.cpp",
+  "file": "/home/nie/IotEdgeGateway/src/services/web_services/api/camera_api.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build-aarch64",
   "command": "/usr/bin/aarch64-linux-gnu-g++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_common.dir/src/services/web_services/websocket/websocket_server.cpp.o -c /home/nie/IotEdgeGateway/src/services/web_services/websocket/websocket_server.cpp",
   "file": "/home/nie/IotEdgeGateway/src/services/web_services/websocket/websocket_server.cpp"
 },
@@ -48,6 +58,11 @@
   "directory": "/home/nie/IotEdgeGateway/build-aarch64",
   "command": "/usr/bin/aarch64-linux-gnu-g++ -I/home/nie/IotEdgeGateway/src -I/home/nie/IotEdgeGateway/build-aarch64/generated -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/src -I/home/nie/IotEdgeGateway/build/_deps/rapidyaml-src/ext/c4core/src -g -std=gnu++14 -o CMakeFiles/iotgw_gateway.dir/src/gateway/main.cpp.o -c /home/nie/IotEdgeGateway/src/gateway/main.cpp",
   "file": "/home/nie/IotEdgeGateway/src/gateway/main.cpp"
+},
+{
+  "directory": "/home/nie/IotEdgeGateway/build-aarch64",
+  "command": "/usr/bin/aarch64-linux-gnu-gcc -I/home/nie/IotEdgeGateway/build/_deps/mongoose-src -g -o CMakeFiles/iotgw_mqtt_broker.dir/src/tools/mqtt_broker/main.c.o -c /home/nie/IotEdgeGateway/src/tools/mqtt_broker/main.c",
+  "file": "/home/nie/IotEdgeGateway/src/tools/mqtt_broker/main.c"
 },
 {
   "directory": "/home/nie/IotEdgeGateway/build-aarch64",

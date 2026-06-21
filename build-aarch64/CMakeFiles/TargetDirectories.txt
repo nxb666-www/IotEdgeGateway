@@ -1,6 +1,7 @@
 /home/nie/IotEdgeGateway/build-aarch64/CMakeFiles/mongoose_lib.dir
 /home/nie/IotEdgeGateway/build-aarch64/CMakeFiles/iotgw_common.dir
 /home/nie/IotEdgeGateway/build-aarch64/CMakeFiles/iotgw_gateway.dir
+/home/nie/IotEdgeGateway/build-aarch64/CMakeFiles/iotgw_mqtt_broker.dir
 /home/nie/IotEdgeGateway/build-aarch64/CMakeFiles/edit_cache.dir
 /home/nie/IotEdgeGateway/build-aarch64/CMakeFiles/rebuild_cache.dir
 /home/nie/IotEdgeGateway/build-aarch64/CMakeFiles/list_install_components.dir

@@ -8,9 +8,7 @@
 #include "mongoose.h"
 #include "core/common/logger/logger.hpp"
 
-// MQTT 客户端
-// 用法：
-//   MqttClient client(mgr, logger);
+// MQTT 瀹㈡埛绔?// 鐢ㄦ硶锛?//   MqttClient client(mgr, logger);
 //   MqttClient::Options opt;
 //   opt.url = "mqtt://localhost:1883";
 //   opt.client_id = "iotgw-dev";
@@ -18,11 +16,11 @@
 //   client.Subscribe("iotgw/dev/telemetry/#");
 //   client.Publish("iotgw/dev/cmd/led", "{\"value\":1}");
 class MqttClient {
-    // 声明回调函数为友元，这样它能访问私有成员
+    // 澹版槑鍥炶皟鍑芥暟涓哄弸鍏冿紝杩欐牱瀹冭兘璁块棶绉佹湁鎴愬憳
     friend void mqtt_event_handler(struct mg_connection*, int, void*);
 
 public:
-    // 连接选项
+    // 杩炴帴閫夐」
     struct Options {
         std::string url;              // "mqtt://host:port"
         std::string client_id;
@@ -33,7 +31,7 @@ public:
         uint8_t version = 4;
     };
 
-    // 消息处理回调类型
+    // 娑堟伅澶勭悊鍥炶皟绫诲瀷
     using MessageHandler = std::function<void(const std::string& topic,
                                                const std::string& payload)>;
 
@@ -48,12 +46,8 @@ public:
     bool IsOpen() const;
 
 private:
-    struct mg_mgr* mgr_;                    // Mongoose 管理器
-    std::shared_ptr<Logger> logger_;        // 日志器
-    struct mg_connection* conn_;            // MQTT 连接
-    bool connected_;                        // 是否已连接
-    Options options_;                       // 连接选项（重连用）
-    MessageHandler message_handler_;        // 消息处理回调
+    struct mg_mgr* mgr_;                    // Mongoose 绠＄悊鍣?    std::shared_ptr<Logger> logger_;        // 鏃ュ織鍣?    struct mg_connection* conn_;            // MQTT 杩炴帴
+    bool connected_;                        // 鏄惁宸茶繛鎺?    Options options_;                       // 杩炴帴閫夐」锛堥噸杩炵敤锛?    MessageHandler message_handler_;        // 娑堟伅澶勭悊鍥炶皟
 };
 
 #endif
