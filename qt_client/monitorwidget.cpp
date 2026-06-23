@@ -14,7 +14,7 @@ static void loadApiBase() {
     // 从 exe 同目录的 ini 文件读取
     QString iniPath = QCoreApplication::applicationDirPath() + "/iotgw_qt_client.ini";
     QSettings cfg(iniPath, QSettings::IniFormat);
-    API_BASE = cfg.value("server/url", "http://192.168.137.170:8080").toString();
+    API_BASE = cfg.value("server/url", "http://192.168.233.107:8081").toString();
 }
 
 MonitorWidget::MonitorWidget(QWidget *parent) :
@@ -106,9 +106,9 @@ void MonitorWidget::pollSensorData()
         ui->valLight->setText(valOrDash(obj.value("light"), 0));
 
         int ir = obj.value("ir").toInt();
-        ui->valIr->setText(ir > 2000 ? "有人" : "安全");
+        ui->valIr->setText(ir == 1 ? "有人" : "安全");
         ui->valIr->setStyleSheet(QString("font-size:16px; font-weight:800; color:%1;")
-            .arg(ir > 2000 ? "#ef4444" : "#10b981"));
+            .arg(ir == 1 ? "#ef4444" : "#10b981"));
     });
 }
 

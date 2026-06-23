@@ -49,6 +49,33 @@ static void free_sub(struct sub *sub) {
   free(sub);
 }
 
+static bool mqtt_topic_match(struct mg_str topic, struct mg_str filter) {
+  size_t ti = 0, fi = 0;
+
+  while (fi < filter.len) {
+    if (filter.buf[fi] == '#') {
+      return fi == filter.len - 1;
+    }
+
+    if (filter.buf[fi] == '+') {
+      while (ti < topic.len && topic.buf[ti] != '/') ti++;
+      fi++;
+      if (fi < filter.len && filter.buf[fi] == '/') {
+        if (ti >= topic.len || topic.buf[ti] != '/') return false;
+        ti++;
+        fi++;
+      }
+      continue;
+    }
+
+    if (ti >= topic.len || topic.buf[ti] != filter.buf[fi]) return false;
+    ti++;
+    fi++;
+  }
+
+  return ti == topic.len;
+}
+
 static void broker_fn(struct mg_connection *c, int ev, void *ev_data) {
   if (ev == MG_EV_MQTT_CMD) {
     struct mg_mqtt_message *mm = (struct mg_mqtt_message *) ev_data;
@@ -79,10 +106,6 @@ static void broker_fn(struct mg_connection *c, int ev, void *ev_data) {
           sub->qos = qos;
           LIST_ADD_HEAD(struct sub, &s_subs, sub);
 
-          for (size_t i = 0; i < sub->topic.len; i++) {
-            if (sub->topic.buf[i] == '+') ((char *) sub->topic.buf)[i] = '*';
-          }
-
           resp[num_topics++] = qos;
           MG_INFO(("SUB fd=%lu topic=%.*s", (unsigned long) c->fd,
                    (int) sub->topic.len, sub->topic.buf));
@@ -100,7 +123,7 @@ static void broker_fn(struct mg_connection *c, int ev, void *ev_data) {
                  mm->topic.buf, (int) mm->data.len, mm->data.buf));
 
         for (struct sub *sub = s_subs; sub != NULL; sub = sub->next) {
-          if (mg_match(mm->topic, sub->topic, NULL)) {
+          if (mqtt_topic_match(mm->topic, sub->topic)) {
             struct mg_mqtt_opts opts;
             memset(&opts, 0, sizeof(opts));
             opts.topic = mm->topic;

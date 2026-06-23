@@ -21,7 +21,21 @@ void mqtt_event_handler(struct mg_connection* c, int ev, void* ev_data) {
             client->message_handler_(topic, payload);
         }
     } else if (ev == MG_EV_ERROR) {
-        // 连接出错
+        if (client) {
+            client->connected_ = false;
+            if (client->logger_) {
+                const char* err = ev_data ? (const char*)ev_data : "";
+                client->logger_->Warn(std::string("MQTT 连接错误: ") + err);
+            }
+        }
+    } else if (ev == MG_EV_CLOSE) {
+        if (client) {
+            client->connected_ = false;
+            if (client->conn_ == c) {
+                client->conn_ = nullptr;
+            }
+            if (client->logger_) client->logger_->Warn("MQTT 连接已断开");
+        }
     }
 }
 

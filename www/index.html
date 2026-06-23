@@ -48,6 +48,41 @@
             font-size: 13px;
         }
 
+        .tabs {
+            display: flex;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .tab-btn {
+            flex: 1;
+            height: 42px;
+            border: 0;
+            background: #fff;
+            color: #64748b;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            background: #eef2ff;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .page {
+            display: none;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
         /* 主区域布局 */
         .main-grid {
             display: grid;
@@ -296,6 +331,89 @@
             font-size: 12px;
             color: #94a3b8;
         }
+
+        .history-tools {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .history-tools select {
+            height: 36px;
+            border: 1px solid #dbe3ef;
+            border-radius: 8px;
+            padding: 0 8px;
+            background: #fff;
+        }
+
+        .history-table-wrap {
+            max-height: 180px;
+            overflow: auto;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 8px;
+            border-bottom: 1px solid #edf2f7;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .history-table th {
+            background: #f8fafc;
+            color: #64748b;
+            position: sticky;
+            top: 0;
+        }
+
+        .history-empty {
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            width: 100%;
+            min-height: 0;
+        }
+
+        .history-side {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .history-side label {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .history-side select {
+            width: 100%;
+            height: 36px;
+            margin: 6px 0 12px;
+            border: 1px solid #dbe3ef;
+            border-radius: 8px;
+            padding: 0 8px;
+            background: #fff;
+        }
+
+        .history-chart {
+            height: 220px;
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -306,6 +424,12 @@
         <div class="status-tag" id="conn_status">设备在线</div>
     </div>
 
+    <div class="tabs">
+        <button class="tab-btn active" data-page="monitor_page">实时监控</button>
+        <button class="tab-btn" data-page="history_page">历史数据</button>
+    </div>
+
+    <section id="monitor_page" class="page active">
     <div class="main-grid">
         <!-- 左侧 -->
         <div class="column">
@@ -384,6 +508,57 @@
             </div>
         </div>
     </div>
+    </section>
+
+    <section id="history_page" class="page">
+        <div class="history-grid">
+            <div class="history-side">
+                <div class="card">
+                    <div class="card-title">查询条件</div>
+                    <label for="history_device">选择设备</label>
+                    <select id="history_device">
+                        <option value="temp">温度传感器</option>
+                        <option value="humi">湿度传感器</option>
+                        <option value="light">光照传感器</option>
+                        <option value="ir">红外传感器</option>
+                    </select>
+                    <label for="history_limit">显示条数</label>
+                    <select id="history_limit">
+                        <option value="20">最近 20 条</option>
+                        <option value="50">最近 50 条</option>
+                        <option value="100">最近 100 条</option>
+                    </select>
+                    <button id="historyQueryBtn" class="btn btn-stream-start">查询历史数据</button>
+                </div>
+                <div class="card">
+                    <div class="card-title">最新数据</div>
+                    <div class="sensor-row" style="grid-template-columns: 1fr 1fr;">
+                        <div class="s-card"><div>温度</div><div class="s-val" id="latest_temp">--</div><div class="s-unit">°C</div></div>
+                        <div class="s-card"><div>湿度</div><div class="s-val" id="latest_humi">--</div><div class="s-unit">% RH</div></div>
+                        <div class="s-card"><div>光照</div><div class="s-val" id="latest_light">--</div><div class="s-unit">Lux</div></div>
+                        <div class="s-card"><div>红外</div><div class="s-val" id="latest_ir" style="font-size:16px;">--</div><div class="s-unit">Status</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <div class="card-title">数据可视化</div>
+                    <canvas id="history_chart" class="history-chart" width="900" height="220"></canvas>
+                </div>
+                <div class="card" style="flex: 1; min-height: 0;">
+                    <div class="card-title">数据库历史遥测数据</div>
+                    <div class="history-table-wrap" style="flex: 1;">
+                        <table class="history-table">
+                            <thead><tr><th>数值</th><th>设备时间戳</th><th>入库时间</th></tr></thead>
+                            <tbody id="history_body">
+                                <tr><td colspan="3" class="history-empty">暂无历史数据</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <script>
         // ========== 视频流核心配置 ==========
@@ -408,8 +583,16 @@
         const streamStopBtn = document.getElementById('streamStopBtn');
         const snapshotBtn = document.getElementById('snapshotBtn');
         const recordBtn = document.getElementById('recordBtn');
+        const historyDevice = document.getElementById('history_device');
+        const historyLimit = document.getElementById('history_limit');
+        const historyQueryBtn = document.getElementById('historyQueryBtn');
+        const historyBody = document.getElementById('history_body');
+        const historyChart = document.getElementById('history_chart');
 
         let currentDir = 0;
+        let statusBusy = false;
+        let controlBusy = false;
+        let controlPending = false;
 
         // 写入日志函数（增强，兼容视频流日志）
         function addLog(msg) {
@@ -557,13 +740,21 @@
             }
         }
 
-      function cmd() {
+      async function cmd() {
+    if (controlBusy) {
+        controlPending = true;
+        return;
+    }
+
+    controlBusy = true;
+    controlPending = false;
+
     const payload = {
         led_on: document.getElementById('led_sw').checked ? 1 : 0,
         led_br: parseInt(document.getElementById('led_br').value),
         motor_on: document.getElementById('motor_sw').checked ? 1 : 0,
         motor_sp: parseInt(document.getElementById('motor_sp').value),
-        motor_dir: currentDir,  
+        motor_dir: currentDir,
         buzzer: document.getElementById('buzzer_sw').checked ? 1 : 0
     };
 
@@ -574,13 +765,23 @@
 
     addLog(`发送指令: ${JSON.stringify(msg)}`);
 
-    fetch('/api/control', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(msg)
-    }).catch(err => {
+    try {
+        const res = await fetch('/api/control', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(msg)
+        });
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+        }
+    } catch (err) {
         addLog(`指令发送失败: ${err.message}`);
-    });
+    } finally {
+        controlBusy = false;
+        if (controlPending) {
+            setTimeout(cmd, 80);
+        }
+    }
 }
 
 
@@ -616,15 +817,116 @@ function setMotorDirUser(dir) {
         `电机控制: ${sw}, 速度 ${sp}%, 方向 ${currentDir === 0 ? '正转' : '反转'}`
     );
 }
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.page === pageId);
+            });
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.toggle('active', page.id === pageId);
+            });
+            if (pageId === 'history_page') {
+                queryHistory();
+            }
+        }
+
+        function formatTime(v) {
+            if (v === undefined || v === null || v === '') return '--';
+            const n = Number(v);
+            if (!Number.isFinite(n) || n <= 0) return String(v);
+            const ms = n > 1000000000000 ? n : n * 1000;
+            return new Date(ms).toLocaleString();
+        }
+
+        function drawHistory(values, title) {
+            if (!historyChart) return;
+            const ctx = historyChart.getContext('2d');
+            const w = historyChart.width;
+            const h = historyChart.height;
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, w, h);
+
+            const left = 50, right = w - 18, top = 32, bottom = h - 24;
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = top + (bottom - top) * i / 4;
+                ctx.beginPath();
+                ctx.moveTo(left, y);
+                ctx.lineTo(right, y);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = '#64748b';
+            ctx.font = '14px sans-serif';
+            ctx.fillText(title || '历史趋势', left, 20);
+            if (!values.length) {
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillText('暂无历史数据', w / 2 - 42, h / 2);
+                return;
+            }
+
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            const span = max === min ? 1 : max - min;
+            ctx.strokeStyle = '#5c67f2';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            values.forEach((value, i) => {
+                const x = values.length === 1 ? (left + right) / 2 : left + (right - left) * i / (values.length - 1);
+                const y = bottom - (value - min) / span * (bottom - top);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        }
+
+        async function queryHistory() {
+            const deviceId = historyDevice.value;
+            const limit = historyLimit.value;
+            historyQueryBtn.disabled = true;
+            try {
+                const data = await sendCommand(`/api/history?device_id=${encodeURIComponent(deviceId)}&limit=${limit}`);
+                const items = Array.isArray(data.items) ? data.items.slice().reverse() : [];
+                if (!items.length) {
+                    historyBody.innerHTML = '<tr><td colspan="3" class="history-empty">暂无历史数据</td></tr>';
+                    drawHistory([], historyDevice.options[historyDevice.selectedIndex].text);
+                    addLog('历史数据查询完成: 0 条');
+                    return;
+                }
+
+                historyBody.innerHTML = items.map(item => {
+                    const value = Number(item.value);
+                    const valueText = Number.isFinite(value) ? value.toFixed(2) : '--';
+                    return `<tr><td>${valueText}</td><td>${formatTime(item.ts)}</td><td>${formatTime(item.created_at)}</td></tr>`;
+                }).join('');
+                drawHistory(items.map(item => Number(item.value)).filter(Number.isFinite),
+                    historyDevice.options[historyDevice.selectedIndex].text);
+                addLog(`历史数据查询完成: ${items.length} 条`);
+            } catch (err) {
+                historyBody.innerHTML = '<tr><td colspan="3" class="history-empty">历史数据查询失败</td></tr>';
+                addLog(`历史数据查询失败: ${err.message}`);
+            } finally {
+                historyQueryBtn.disabled = false;
+            }
+        }
+
         // ========== 事件绑定 ==========
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => switchPage(btn.dataset.page);
+        });
         // 视频流按钮绑定
         streamStartBtn.onclick = startStream;
         streamStopBtn.onclick = stopStream;
         snapshotBtn.onclick = takeSnapshot;
         recordBtn.onclick = toggleRecord;
+        historyQueryBtn.onclick = queryHistory;
 
         // 定时拉取传感器数据
-        setInterval(() => {
+        function pollStatus() {
+            if (statusBusy) return;
+            statusBusy = true;
             fetch('/api/status').then(r => r.json()).then(data => {
                 // 渲染传感器数据
                 document.getElementById('val_temp').innerText = data.temp || '--';
@@ -634,6 +936,12 @@ function setMotorDirUser(dir) {
                 const irActive = Number(data.ir) === 1;
                 irBox.innerText = irActive ? "有人" : "安全";
                 irBox.style.color = irActive ? "var(--danger)" : "var(--success)";
+                document.getElementById('latest_temp').innerText = data.temp || '--';
+                document.getElementById('latest_humi').innerText = data.humi || '--';
+                document.getElementById('latest_light').innerText = data.light || '--';
+                const latestIr = document.getElementById('latest_ir');
+                latestIr.innerText = irActive ? "有人" : "安全";
+                latestIr.style.color = irActive ? "var(--danger)" : "var(--success)";
 
                 // 恢复连接状态
                 document.getElementById('conn_status').innerText = "设备在线";
@@ -642,8 +950,13 @@ function setMotorDirUser(dir) {
                 document.getElementById('conn_status').innerText = "连接断开";
                 document.getElementById('conn_status').style.color = "#ff4d4d";
                 addLog(`传感器数据获取失败: ${e.message}`);
+            }).finally(() => {
+                statusBusy = false;
             });
-        }, 1000);
+        }
+
+        pollStatus();
+        setInterval(pollStatus, 1000);
 
         // 初始化日志
         addLog('[系统] 页面加载完成，设备控制就绪');

@@ -155,20 +155,23 @@ uint8_t ESP8266_Publish(const char *topic, const char *payload)
     }
 
     sprintf(cmd, "AT+MQTTPUBRAW=0,\"%s\",%u,0,0", topic, (unsigned int)strlen(payload));
-    if (!ESP8266_SendCmd(cmd, ">", 2000))
+    if (!ESP8266_SendCmd(cmd, ">", 3000))
     {
         s_mqtt_ready = 0;
+        ESP8266_SendCmd("AT+MQTTCLEAN=0", "OK", 1000);
         return 0;
     }
 
     ESP8266_ClearRx();
-    Send_Str((uint8_t *)payload);
-    if (!ESP8266_WaitFor("OK", 3000))
+    Send_Arr((uint8_t *)payload, (uint16_t)strlen(payload));
+    if (!ESP8266_WaitFor("OK", 5000))
     {
         s_mqtt_ready = 0;
+        ESP8266_SendCmd("AT+MQTTCLEAN=0", "OK", 1000);
         return 0;
     }
 
+    Delay_ms(120);
     return 1;
 }
 

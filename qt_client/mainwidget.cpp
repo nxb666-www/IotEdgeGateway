@@ -203,7 +203,7 @@ void MainWidget::loadConfig()
 {
     const QString iniPath = QCoreApplication::applicationDirPath() + "/iotgw_qt_client.ini";
     QSettings cfg(iniPath, QSettings::IniFormat);
-    apiBase_ = cfg.value("server/url", "http://192.168.137.170:8081").toString();
+    apiBase_ = cfg.value("server/url", "http://192.168.233.107:8081").toString();
 }
 
 void MainWidget::applyStyle()

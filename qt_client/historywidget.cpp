@@ -12,7 +12,7 @@
 static QString getApiBase() {
     QString iniPath = QCoreApplication::applicationDirPath() + "/iotgw_qt_client.ini";
     QSettings cfg(iniPath, QSettings::IniFormat);
-    return cfg.value("server/url", "http://192.168.137.170:8080").toString();
+    return cfg.value("server/url", "http://192.168.233.107:8081").toString();
 }
 
 HistoryWidget::HistoryWidget(QWidget *parent) :
@@ -57,9 +57,9 @@ void HistoryWidget::refreshStats()
         ui->statLight->setText(data.contains("light") ? QString::number(data["light"].toDouble(), 'f', 0) : "--");
 
         int ir = data.value("ir").toInt();
-        ui->statIr->setText(ir > 2000 ? "有人" : "安全");
+        ui->statIr->setText(ir == 1 ? "有人" : "安全");
         ui->statIr->setStyleSheet(QString("font-size:16px; font-weight:800; color:%1;")
-            .arg(ir > 2000 ? "#ef4444" : "#10b981"));
+            .arg(ir == 1 ? "#ef4444" : "#10b981"));
     });
 }
 

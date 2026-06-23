@@ -60,9 +60,9 @@ int main(void)
 
     ESP8266_Init();
 
-    uint16_t aht30_ms = 2000;
-    uint16_t light_ms = 1000;
-    uint16_t infrared_ms = 1000;
+    uint16_t aht30_ms = 3000;
+    uint16_t light_ms = 800;
+    uint16_t infrared_ms = 1600;
     uint16_t esp8266_reconnect_ms = 0;
 
     while (1)
@@ -75,20 +75,21 @@ int main(void)
             ESP8266_Init();
         }
 
-        if (aht30_ms >= 2000)
+        if (aht30_ms >= 3000)
         {
             aht30_ms = 0;
             Protocol_UploadAHT30();
+            ProcessCommand();
         }
 
-        if (light_ms >= 1000)
+        if (light_ms >= 2000)
         {
             light_ms = 0;
             Protocol_UploadLightSensor();
             ProcessCommand();
         }
 
-        if (infrared_ms >= 1000)
+        if (infrared_ms >= 2000)
         {
             infrared_ms = 0;
             Protocol_UploadInfrared();

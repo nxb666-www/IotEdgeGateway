@@ -277,12 +277,18 @@ int GatewayCore::Run(int argc, char* argv[]) {
 
     MongooseServer server;
     std::shared_ptr<MqttClient> mqtt_client;
+    MqttClient::Options mqtt_options;
+    std::string mqtt_telemetry_topic;
+    int64_t last_mqtt_reconnect_ms = 0;
 
     if (mqtt_enabled) {
         std::string broker_host = cfg.GetStringOr("mqtt.broker_host", "127.0.0.1");
         int64_t broker_port = 1883;
         cfg.GetInt64("mqtt.broker_port", broker_port);
         std::string client_id = cfg.GetStringOr("mqtt.client_id", "iotgw-dev");
+        mqtt_options.url = "mqtt://" + broker_host + ":" + std::to_string(broker_port);
+        mqtt_options.client_id = client_id;
+        mqtt_telemetry_topic = topic_prefix + "telemetry/#";
 
         mqtt_client = std::make_shared<MqttClient>(server.GetMgr(), logger);
         DeviceApi::SetMqttClient(mqtt_client.get());
@@ -390,16 +396,12 @@ int GatewayCore::Run(int argc, char* argv[]) {
         );
 
         // 连接 MQTT Broker
-        MqttClient::Options opt;
-        opt.url = "mqtt://" + broker_host + ":" + std::to_string(broker_port);
-        opt.client_id = client_id;
-
-        if (mqtt_client->Connect(opt)) {
+        if (mqtt_client->Connect(mqtt_options)) {
             // 订阅遥测主题：接收 ESP32 发布的传感器数据
             // ESP32 发布到 iotgw/dev/telemetry/temp 等
             // → 这里订阅了 iotgw/dev/telemetry/# 就能收到所有传感器数据
-            mqtt_client->Subscribe(topic_prefix + "telemetry/#");
-            logger->Info("MQTT 已连接: " + opt.url);
+            mqtt_client->Subscribe(mqtt_telemetry_topic);
+            logger->Info("MQTT 已连接: " + mqtt_options.url);
         } else {
             logger->Warn("MQTT 连接失败，继续运行...");
         }
@@ -481,7 +483,7 @@ int GatewayCore::Run(int argc, char* argv[]) {
     });
 
     std::string host = cfg.GetStringOr("network.http_api.host", "0.0.0.0");
-    int64_t port = 8080;
+    int64_t port = 8081;
     cfg.GetInt64("network.http_api.port", port);
 
     std::string addr = "http://" + host + ":" + std::to_string(port);
@@ -502,6 +504,15 @@ int GatewayCore::Run(int argc, char* argv[]) {
     });
 
     while (running) {
+        if (mqtt_enabled && mqtt_client && !mqtt_client->IsOpen() &&
+            NowMs() - last_mqtt_reconnect_ms >= 3000) {
+            last_mqtt_reconnect_ms = NowMs();
+            logger->Warn("MQTT 已断开，尝试重连: " + mqtt_options.url);
+            if (mqtt_client->Connect(mqtt_options)) {
+                mqtt_client->Subscribe(mqtt_telemetry_topic);
+                logger->Info("MQTT 已重连并重新订阅: " + mqtt_telemetry_topic);
+            }
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
