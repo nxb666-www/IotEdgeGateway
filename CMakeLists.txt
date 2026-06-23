@@ -12,6 +12,25 @@ configure_file(
     ${CMAKE_BINARY_DIR}/generated/version.hpp
 )
 
+# ---- 查找系统 SQLite3 ----
+find_package(SQLite3 QUIET)
+if(NOT SQLite3_FOUND)
+    # 如果系统没有 SQLite3，用 FetchContent 拉取
+    include(FetchContent)
+    FetchContent_Declare(
+        sqlite3
+        URL https://www.sqlite.org/2024/sqlite-amalgamation-3450000.zip
+    )
+    FetchContent_MakeAvailable(sqlite3)
+    add_library(sqlite3_lib STATIC ${sqlite3_SOURCE_DIR}/sqlite3.c)
+    target_include_directories(sqlite3_lib PUBLIC ${sqlite3_SOURCE_DIR})
+    set(SQLITE3_LIBRARIES sqlite3_lib)
+    set(SQLITE3_INCLUDE_DIRS ${sqlite3_SOURCE_DIR})
+else()
+    set(SQLITE3_LIBRARIES SQLite::SQLite3)
+    set(SQLITE3_INCLUDE_DIRS "")
+endif()
+
 # ---- FetchContent 拉依赖 ----
 include(FetchContent)
 
@@ -46,6 +65,7 @@ add_library(iotgw_common STATIC
     src/core/common/config/config_manager.cpp
     src/core/device/manager/device_registry.cpp
     src/core/device/protocol_adapters/mqtt_adapter/mqtt_client.cpp
+    src/core/storage/sqlite_storage.cpp
     src/services/web_services/api/device_api.cpp
     src/services/web_services/api/rest_api.cpp
     src/services/web_services/api/rule_api.cpp
@@ -60,7 +80,11 @@ target_include_directories(iotgw_common PUBLIC
 target_link_libraries(iotgw_common PUBLIC
     mongoose_lib
     ryml
+    ${SQLITE3_LIBRARIES}
 )
+if(SQLITE3_INCLUDE_DIRS)
+    target_include_directories(iotgw_common PUBLIC ${SQLITE3_INCLUDE_DIRS})
+endif()
 
 # ---- 可执行文件 ----
 add_executable(iotgw_gateway
@@ -68,6 +92,8 @@ add_executable(iotgw_gateway
 )
 target_link_libraries(iotgw_gateway PRIVATE
     iotgw_common
+    pthread
+    dl
 )
 
 add_executable(iotgw_mqtt_broker

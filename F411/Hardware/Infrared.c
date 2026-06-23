@@ -12,5 +12,5 @@ void Infrared_Init(void)
 
 uint8_t Infrared_Read(void)
 {
-    return GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4);
+    return GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4) == Bit_RESET ? 1 : 0;
 }

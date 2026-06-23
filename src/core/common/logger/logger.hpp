@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <fstream>
+#include <vector>
 
 /**
  * 日志级别枚举
@@ -79,6 +80,14 @@ public:
  */
 class ConsoleSink : public Sink {
 public:
+    void Write(Level level, const std::string& msg) override;
+};
+
+class MultiSink : public Sink {
+private:
+    std::vector<std::shared_ptr<Sink>> sinks_;
+public:
+    void Add(std::shared_ptr<Sink> sink);
     void Write(Level level, const std::string& msg) override;
 };
 

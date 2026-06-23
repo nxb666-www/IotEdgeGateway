@@ -1,9 +1,9 @@
 name: IotEdgeGateway
-env: development
+env: production
 
 paths:
   www_root: www
-  log_file: data/logs/iotgw-dev.log
+  log_file: /var/log/iotgw/iotgw.log
 
 logging:
   level: info
@@ -17,7 +17,7 @@ mqtt:
   enabled: true
   broker_host: "127.0.0.1"
   broker_port: 1884
-  client_id: iotgw-dev
+  client_id: iotgw-rk3568
   username: ""
   password: ""
   keepalive_sec: 30

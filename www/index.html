@@ -631,8 +631,9 @@ function setMotorDirUser(dir) {
                 document.getElementById('val_humi').innerText = data.humi || '--';
                 document.getElementById('val_light').innerText = data.light || '--';
                 const irBox = document.getElementById('val_ir');
-                irBox.innerText = data.ir>2000 ? "有人" : "安全";
-                irBox.style.color = data.ir ? "var(--danger)" : "var(--success)";
+                const irActive = Number(data.ir) === 1;
+                irBox.innerText = irActive ? "有人" : "安全";
+                irBox.style.color = irActive ? "var(--danger)" : "var(--success)";
 
                 // 恢复连接状态
                 document.getElementById('conn_status').innerText = "设备在线";

@@ -22,9 +22,12 @@ codex_vm_key.pub
 Thumbs.db
 
 .codex_tmp/
+.ssh_tmp/
 
 build-aarch64/
 
 build/
+iotgw_package/
 
 *.bak
+*.uvguix.*

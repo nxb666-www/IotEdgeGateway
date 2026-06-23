@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MonitorWidget</class>
+ <widget class="QWidget" name="MonitorWidget">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>1100</width><height>650</height></rect>
+  </property>
+  <layout class="QHBoxLayout" name="mainGrid">
+   <property name="spacing"><number>10</number></property>
+   <property name="leftMargin"><number>0</number></property>
+   <property name="topMargin"><number>0</number></property>
+   <property name="rightMargin"><number>0</number></property>
+   <property name="bottomMargin"><number>0</number></property>
+
+   <!-- ========== 左列 (72%) ========== -->
+   <item>
+    <layout class="QVBoxLayout" name="leftCol">
+     <property name="spacing"><number>10</number></property>
+
+     <!-- 视频卡片 -->
+     <item>
+      <widget class="QFrame" name="videoCard">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch><verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet"><string>QFrame{background:white; border-radius:10px; border:1px solid #e5e7eb;}</string></property>
+       <layout class="QVBoxLayout" name="videoCardLay">
+        <property name="spacing"><number>8</number></property>
+        <property name="leftMargin"><number>14</number></property>
+        <property name="topMargin"><number>12</number></property>
+        <property name="rightMargin"><number>14</number></property>
+        <property name="bottomMargin"><number>12</number></property>
+        <item>
+         <widget class="QLabel" name="labelVideoTitle">
+          <property name="text"><string>实时画面监控</string></property>
+          <property name="styleSheet"><string>font-size:15px; font-weight:700; color:#1f2937;</string></property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelVideo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+            <horstretch>0</horstretch><verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize"><size><width>0</width><height>200</height></size></property>
+          <property name="styleSheet"><string>background:#000; border-radius:8px; border:3px solid #fff;</string></property>
+          <property name="text"><string></string></property>
+          <property name="alignment"><set>Qt::AlignCenter</set></property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="videoBar">
+          <property name="spacing"><number>6</number></property>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="btnStreamStart">
+            <property name="text"><string>开始推流</string></property>
+            <property name="styleSheet"><string>QPushButton{background:#3b82f6;color:white;border:none;border-radius:6px;padding:8px;font-weight:600;font-size:13px;} QPushButton:hover{background:#2563eb;} QPushButton:disabled{background:#ccc;}</string></property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="btnStreamStop">
+            <property name="text"><string>停止推流</string></property>
+            <property name="enabled"><bool>false</bool></property>
+            <property name="styleSheet"><string>QPushButton{background:#64748b;color:white;border:none;border-radius:6px;padding:8px;font-weight:600;font-size:13px;} QPushButton:hover{background:#475569;} QPushButton:disabled{background:#ccc;}</string></property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="btnSnapshot">
+            <property name="text"><string>抓拍照片</string></property>
+            <property name="styleSheet"><string>QPushButton{background:#10b981;color:white;border:none;border-radius:6px;padding:8px;font-weight:600;font-size:13px;} QPushButton:hover{background:#059669;}</string></property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="btnRecord">
+            <property name="text"><string>视频录制</string></property>
+            <property name="styleSheet"><string>QPushButton{background:#ef4444;color:white;border:none;border-radius:6px;padding:8px;font-weight:600;font-size:13px;} QPushButton:hover{background:#dc2626;}</string></property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+
+     <!-- 传感器行 -->
+     <item>
+      <layout class="QHBoxLayout" name="sensorRow">
+       <property name="spacing"><number>10</number></property>
+       <item>
+        <widget class="QFrame" name="sCardTemp">
+         <property name="styleSheet"><string>QFrame{background:white; border-radius:8px; border:1px solid #e5e7eb;}</string></property>
+         <layout class="QVBoxLayout" name="sCardTempLay">
+          <property name="spacing"><number>2</number></property>
+          <property name="topMargin"><number>10</number></property>
+          <property name="bottomMargin"><number>10</number></property>
+          <item><widget class="QLabel" name="sLabelTemp"><property name="text"><string>温度</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:12px; color:#64748b;</string></property></widget></item>
+          <item><widget class="QLabel" name="valTemp"><property name="text"><string>--</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:24px; font-weight:800; color:#5c67f2;</string></property></widget></item>
+          <item><widget class="QLabel" name="unitTemp"><property name="text"><string>°C</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:11px; color:#94a3b8;</string></property></widget></item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="sCardHumi">
+         <property name="styleSheet"><string>QFrame{background:white; border-radius:8px; border:1px solid #e5e7eb;}</string></property>
+         <layout class="QVBoxLayout" name="sCardHumiLay">
+          <property name="spacing"><number>2</number></property>
+          <property name="topMargin"><number>10</number></property>
+          <property name="bottomMargin"><number>10</number></property>
+          <item><widget class="QLabel" name="sLabelHumi"><property name="text"><string>湿度</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:12px; color:#64748b;</string></property></widget></item>
+          <item><widget class="QLabel" name="valHumi"><property name="text"><string>--</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:24px; font-weight:800; color:#5c67f2;</string></property></widget></item>
+          <item><widget class="QLabel" name="unitHumi"><property name="text"><string>% RH</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:11px; color:#94a3b8;</string></property></widget></item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="sCardLight">
+         <property name="styleSheet"><string>QFrame{background:white; border-radius:8px; border:1px solid #e5e7eb;}</string></property>
+         <layout class="QVBoxLayout" name="sCardLightLay">
+          <property name="spacing"><number>2</number></property>
+          <property name="topMargin"><number>10</number></property>
+          <property name="bottomMargin"><number>10</number></property>
+          <item><widget class="QLabel" name="sLabelLight"><property name="text"><string>光照</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:12px; color:#64748b;</string></property></widget></item>
+          <item><widget class="QLabel" name="valLight"><property name="text"><string>--</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:24px; font-weight:800; color:#5c67f2;</string></property></widget></item>
+          <item><widget class="QLabel" name="unitLight"><property name="text"><string>Lux</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:11px; color:#94a3b8;</string></property></widget></item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="sCardIr">
+         <property name="styleSheet"><string>QFrame{background:white; border-radius:8px; border:1px solid #e5e7eb;}</string></property>
+         <layout class="QVBoxLayout" name="sCardIrLay">
+          <property name="spacing"><number>2</number></property>
+          <property name="topMargin"><number>10</number></property>
+          <property name="bottomMargin"><number>10</number></property>
+          <item><widget class="QLabel" name="sLabelIr"><property name="text"><string>红外</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:12px; color:#64748b;</string></property></widget></item>
+          <item><widget class="QLabel" name="valIr"><property name="text"><string>--</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:16px; font-weight:800; color:#5c67f2;</string></property></widget></item>
+          <item><widget class="QLabel" name="unitIr"><property name="text"><string>Status</string></property><property name="alignment"><set>Qt::AlignCenter</set></property><property name="styleSheet"><string>font-size:11px; color:#94a3b8;</string></property></widget></item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+
+   <!-- ========== 右列 (28%) ========== -->
+   <item>
+    <layout class="QVBoxLayout" name="rightCol">
+     <property name="spacing"><number>10</number></property>
+
+     <!-- 控制面板 -->
+     <item>
+      <widget class="QFrame" name="controlCard">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch><verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet"><string>QFrame{background:white; border-radius:10px; border:1px solid #e5e7eb;}</string></property>
+       <layout class="QVBoxLayout" name="controlCardLay">
+        <property name="spacing"><number>0</number></property>
+        <property name="leftMargin"><number>14</number></property>
+        <property name="topMargin"><number>12</number></property>
+        <property name="rightMargin"><number>14</number></property>
+        <property name="bottomMargin"><number>12</number></property>
+        <item>
+         <widget class="QLabel" name="labelControlTitle">
+          <property name="text"><string>硬件外设控制</string></property>
+          <property name="styleSheet"><string>font-size:15px; font-weight:700; color:#1f2937; margin-bottom:8px;</string></property>
+         </widget>
+        </item>
+
+        <!-- LED 控制项 -->
+        <item>
+         <widget class="QFrame" name="ctrlLed">
+          <property name="styleSheet"><string>QFrame{background:#f8fafc; border:1px solid #edf2f7; border-radius:8px; padding:8px;}</string></property>
+          <layout class="QVBoxLayout" name="ctrlLedLay">
+           <property name="spacing"><number>6</number></property>
+           <property name="leftMargin"><number>10</number></property>
+           <property name="topMargin"><number>8</number></property>
+           <property name="rightMargin"><number>10</number></property>
+           <property name="bottomMargin"><number>8</number></property>
+           <item>
+            <layout class="QHBoxLayout" name="ledLabelRow">
+             <item>
+              <widget class="QLabel" name="labelLed"><property name="text"><string>LED 照明灯</string></property><property name="styleSheet"><string>font-size:13px; font-weight:600;</string></property></widget>
+             </item>
+             <item>
+              <spacer name="ledStretch"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>0</height></size></property></spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkLed">
+               <property name="text"><string></string></property>
+               <property name="styleSheet"><string>QCheckBox::indicator{width:36px;height:20px;border-radius:10px;} QCheckBox::indicator:unchecked{background:#cbd5e1;} QCheckBox::indicator:checked{background:#5c67f2;}</string></property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QSlider" name="sliderLed">
+             <property name="minimum"><number>0</number></property>
+             <property name="maximum"><number>100</number></property>
+             <property name="value"><number>50</number></property>
+             <property name="orientation"><enum>Qt::Horizontal</enum></property>
+             <property name="styleSheet"><string>QSlider::groove:horizontal{height:6px;background:#e2e8f0;border-radius:3px;} QSlider::handle:horizontal{width:16px;height:16px;margin:-5px 0;background:#5c67f2;border-radius:8px;} QSlider::sub-page:horizontal{background:#5c67f2;border-radius:3px;}</string></property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+
+        <!-- 电机控制项 -->
+        <item>
+         <widget class="QFrame" name="ctrlMotor">
+          <property name="styleSheet"><string>QFrame{background:#f8fafc; border:1px solid #edf2f7; border-radius:8px; padding:8px;}</string></property>
+          <layout class="QVBoxLayout" name="ctrlMotorLay">
+           <property name="spacing"><number>6</number></property>
+           <property name="leftMargin"><number>10</number></property>
+           <property name="topMargin"><number>8</number></property>
+           <property name="rightMargin"><number>10</number></property>
+           <property name="bottomMargin"><number>8</number></property>
+           <item>
+            <layout class="QHBoxLayout" name="motorLabelRow">
+             <item>
+              <widget class="QLabel" name="labelMotor"><property name="text"><string>直流电机</string></property><property name="styleSheet"><string>font-size:13px; font-weight:600;</string></property></widget>
+             </item>
+             <item>
+              <spacer name="motorStretch"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>0</height></size></property></spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkMotor">
+               <property name="text"><string></string></property>
+               <property name="styleSheet"><string>QCheckBox::indicator{width:36px;height:20px;border-radius:10px;} QCheckBox::indicator:unchecked{background:#cbd5e1;} QCheckBox::indicator:checked{background:#5c67f2;}</string></property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QSlider" name="sliderMotor">
+             <property name="minimum"><number>0</number></property>
+             <property name="maximum"><number>100</number></property>
+             <property name="value"><number>30</number></property>
+             <property name="orientation"><enum>Qt::Horizontal</enum></property>
+             <property name="styleSheet"><string>QSlider::groove:horizontal{height:6px;background:#e2e8f0;border-radius:3px;} QSlider::handle:horizontal{width:16px;height:16px;margin:-5px 0;background:#5c67f2;border-radius:8px;} QSlider::sub-page:horizontal{background:#5c67f2;border-radius:3px;}</string></property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="dirBtns">
+             <property name="spacing"><number>4</number></property>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="btnDirF">
+               <property name="text"><string>正转</string></property>
+               <property name="checkable"><bool>true</bool></property>
+               <property name="checked"><bool>true</bool></property>
+               <property name="styleSheet"><string>QPushButton{background:#e2e8f0;color:#64748b;border:2px solid transparent;border-radius:6px;padding:4px;font-size:12px;} QPushButton:checked{background:#fff;color:#5c67f2;border-color:#5c67f2;font-weight:bold;}</string></property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="btnDirR">
+               <property name="text"><string>反转</string></property>
+               <property name="checkable"><bool>true</bool></property>
+               <property name="styleSheet"><string>QPushButton{background:#e2e8f0;color:#64748b;border:2px solid transparent;border-radius:6px;padding:4px;font-size:12px;} QPushButton:checked{background:#fff;color:#5c67f2;border-color:#5c67f2;font-weight:bold;}</string></property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+
+        <!-- 蜂鸣器控制项 -->
+        <item>
+         <widget class="QFrame" name="ctrlBuzzer">
+          <property name="styleSheet"><string>QFrame{background:#f8fafc; border:1px solid #edf2f7; border-left:3px solid #f59e0b; border-radius:8px; padding:8px;}</string></property>
+          <layout class="QHBoxLayout" name="ctrlBuzzerLay">
+           <property name="leftMargin"><number>10</number></property>
+           <property name="topMargin"><number>8</number></property>
+           <property name="rightMargin"><number>10</number></property>
+           <property name="bottomMargin"><number>8</number></property>
+           <item>
+            <widget class="QLabel" name="labelBuzzer"><property name="text"><string>蜂鸣报警</string></property><property name="styleSheet"><string>font-size:13px; font-weight:600;</string></property></widget>
+           </item>
+           <item>
+            <spacer name="buzzerStretch"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>0</height></size></property></spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBuzzer">
+             <property name="text"><string></string></property>
+             <property name="styleSheet"><string>QCheckBox::indicator{width:36px;height:20px;border-radius:10px;} QCheckBox::indicator:unchecked{background:#cbd5e1;} QCheckBox::indicator:checked{background:#5c67f2;}</string></property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+
+     <!-- 日志卡片 -->
+     <item>
+      <widget class="QFrame" name="logCard">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch><verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet"><string>QFrame{background:white; border-radius:10px; border:1px solid #e5e7eb;}</string></property>
+       <layout class="QVBoxLayout" name="logCardLay">
+        <property name="spacing"><number>8</number></property>
+        <property name="leftMargin"><number>14</number></property>
+        <property name="topMargin"><number>12</number></property>
+        <property name="rightMargin"><number>14</number></property>
+        <property name="bottomMargin"><number>12</number></property>
+        <item>
+         <widget class="QLabel" name="labelLogTitle">
+          <property name="text"><string>系统日志</string></property>
+          <property name="styleSheet"><string>font-size:15px; font-weight:700; color:#1f2937;</string></property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="textLog">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch><verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="readOnly"><bool>true</bool></property>
+          <property name="styleSheet"><string>QTextEdit{background:#0f172a; color:#38bdf8; border:1px solid #1e293b; border-radius:8px; padding:8px; font-family:'Courier New',monospace; font-size:12px;}</string></property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,8 +1,12 @@
 #include "rest_api.hpp"
+#include "core/storage/sqlite_storage.hpp"
+#include <utility>
 
 // 静态成员初始化
 DeviceRegistry* RestApi::registry_ = nullptr;
 MqttClient* RestApi::mqtt_client_ = nullptr;
+SqliteStorage* RestApi::sqlite_ = nullptr;
+std::function<void(const std::string&)> RestApi::manual_control_callback_;
 
 void RestApi::SetRegistry(DeviceRegistry* r) {
     registry_ = r;
@@ -10,6 +14,14 @@ void RestApi::SetRegistry(DeviceRegistry* r) {
 
 void RestApi::SetMqttClient(MqttClient* client) {
     mqtt_client_ = client;
+}
+
+void RestApi::SetSqliteStorage(SqliteStorage* db) {
+    sqlite_ = db;
+}
+
+void RestApi::SetManualControlCallback(std::function<void(const std::string&)> cb) {
+    manual_control_callback_ = std::move(cb);
 }
 
 // 路由分发入口
@@ -75,6 +87,9 @@ bool RestApi::HandleRequest(mg_connection* c, mg_http_message* msg) {
 
     } else if (mg_match(msg->uri, mg_str("/api/rules"), NULL)) {
         RuleApi::HandleRuleList(c);
+
+    } else if (mg_match(msg->uri, mg_str("/api/history"), NULL)) {
+        HandleHistory(c, msg);
 
     } else {
         return false;
@@ -142,8 +157,46 @@ void RestApi::HandleControl(mg_connection* c, mg_http_message* msg) {
 
     // 用 json_utils 提取各个控制参数
     std::string p = "{\"type\":\"control\",\"payload\":" + payload_str + "}";
+    if (manual_control_callback_) {
+        manual_control_callback_(payload_str);
+    }
     mqtt_client_->Publish("iotgw/dev/cmd/control", p);
 
     mg_http_reply(c, 200, "Content-Type: application/json\r\n",
         "{\"status\":\"正常\"}\n");
+}
+
+// GET /api/history?device_id=xxx&limit=100 — 历史遥测数据查询
+void RestApi::HandleHistory(mg_connection* c, mg_http_message* msg) {
+    if (!sqlite_ || !sqlite_->IsOpen()) {
+        mg_http_reply(c, 503, "Content-Type: application/json\r\n",
+            "{\"error\":\"SQLite 未启用\"}\n");
+        return;
+    }
+
+    // 解析查询参数
+    char device_id_buf[128] = {0};
+    char limit_buf[16] = {0};
+    char from_buf[32] = {0};
+    char to_buf[32] = {0};
+    mg_http_get_var(&msg->query, "device_id", device_id_buf, sizeof(device_id_buf));
+    mg_http_get_var(&msg->query, "limit", limit_buf, sizeof(limit_buf));
+    mg_http_get_var(&msg->query, "from", from_buf, sizeof(from_buf));
+    mg_http_get_var(&msg->query, "to", to_buf, sizeof(to_buf));
+
+    if (device_id_buf[0] == '\0') {
+        mg_http_reply(c, 400, "Content-Type: application/json\r\n",
+            "{\"error\":\"缺少 device_id 参数\"}\n");
+        return;
+    }
+
+    int limit = 100;
+    if (limit_buf[0] != '\0') limit = atoi(limit_buf);
+    int64_t from_ms = 0, to_ms = 0;
+    if (from_buf[0] != '\0') from_ms = (int64_t)atoll(from_buf);
+    if (to_buf[0] != '\0') to_ms = (int64_t)atoll(to_buf);
+
+    std::string json = sqlite_->QueryHistoryJson(device_id_buf, limit, from_ms, to_ms);
+    mg_http_reply(c, 200, "Content-Type: application/json\r\n",
+        "%s", json.c_str());
 }

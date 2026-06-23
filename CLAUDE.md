@@ -3,11 +3,6 @@
 ## 项目概述
 嵌入式系统课程项目，构建物联网边缘网关系统。STM32端负责传感器数据采集和执行器控制，通过Zigbee与RK3568边缘网关通信。
 
-## 项目分组
-- 组1: 刘天赐(组长)、王昶斌
-- 组2: 于霄(组长)、白子枫
-- 组3: 金培辰(组长)、毛志龙、聂潇滨
-- 组4: 朱博林(组长)、焦培杰
 
 ## 技术栈
 C/C++14/17 + CMake + Mongoose/nginx + mjpg-streamer/gstreamer/ffmpeg + SQLite3 + Qt5 + Web + Zigbee + **MQTT（必做，没有mqtt直接不过关）**
@@ -19,7 +14,7 @@ C/C++14/17 + CMake + Mongoose/nginx + mjpg-streamer/gstreamer/ffmpeg + SQLite3 +
 4. **单片机模块**: 至少6个外设，上传+下发功能
 
 ## STM32外设（至少6个）
-LED灯、电机(风扇)、舵机、蜂鸣器、DHT11温湿度、光照传感器、红外检测
+LED灯、电机(风扇)、舵机、蜂鸣器、DHT30温湿度、光照传感器、红外检测
 
 ## 通信链路
 STM32 → Zigbee → RK3568 → MQTT → Web/Qt

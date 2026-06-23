@@ -1,7 +1,7 @@
 #include "USART1_Model.h"
 
 volatile uint8_t flag = 0;
-uint8_t message[200] = {0};
+uint8_t message[300] = {0};
 
 void USART_DMAConfig(void)
 {

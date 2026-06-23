@@ -7,14 +7,30 @@
 #include "Buzzer.h"
 #include "Infrared.h"
 #include "USART1_Model.h"
+#include "ESP8266.h"
 #include "PWM.h"
 #include "protocol.h"
 
 static void ProcessCommand(void)
 {
+    char payload[200];
+
+    if (ESP8266_TakeMqttPayload(payload, sizeof(payload)))
+    {
+        Protocol_ParseAndExecute(payload);
+        return;
+    }
+
     if (flag == 1)
     {
-        Protocol_ParseAndExecute((char*)message);
+        if (ESP8266_TryGetMqttPayload((char *)message, payload, sizeof(payload)))
+        {
+            Protocol_ParseAndExecute(payload);
+        }
+        else
+        {
+            Protocol_ParseAndExecute((char*)message);
+        }
         flag = 0;
     }
 }
@@ -42,15 +58,22 @@ int main(void)
     Infrared_Init();
     USART1_Init();
 
-    Send_Str((uint8_t *)"STM32 Ready\r\n");
+    ESP8266_Init();
 
     uint16_t aht30_ms = 2000;
-    uint16_t light_ms = 200;
-    uint16_t infrared_ms = 200;
+    uint16_t light_ms = 1000;
+    uint16_t infrared_ms = 1000;
+    uint16_t esp8266_reconnect_ms = 0;
 
     while (1)
     {
         ProcessCommand();
+
+        if (!ESP8266_IsReady() && esp8266_reconnect_ms >= 5000)
+        {
+            esp8266_reconnect_ms = 0;
+            ESP8266_Init();
+        }
 
         if (aht30_ms >= 2000)
         {
@@ -58,21 +81,24 @@ int main(void)
             Protocol_UploadAHT30();
         }
 
-        if (light_ms >= 200)
+        if (light_ms >= 1000)
         {
             light_ms = 0;
             Protocol_UploadLightSensor();
+            ProcessCommand();
         }
 
-        if (infrared_ms >= 200)
+        if (infrared_ms >= 1000)
         {
             infrared_ms = 0;
             Protocol_UploadInfrared();
+            ProcessCommand();
         }
 
         WaitAndProcess(10);
         aht30_ms += 10;
         light_ms += 10;
         infrared_ms += 10;
+        esp8266_reconnect_ms += 10;
     }
 }

@@ -4,7 +4,7 @@
 #include "stm32f4xx.h"
 #include <stdio.h>
 
-extern uint8_t message[200];
+extern uint8_t message[300];
 extern volatile uint8_t flag;
 
 void USART1_Init(void);

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWidget</class>
+ <widget class="QWidget" name="MainWidget">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>1280</width><height>800</height></rect>
+  </property>
+  <property name="minimumSize">
+   <size><width>1000</width><height>650</height></size>
+  </property>
+  <property name="windowTitle">
+   <string>RK3568 智能控制中心</string>
+  </property>
+  <layout class="QVBoxLayout" name="root">
+   <property name="spacing"><number>8</number></property>
+   <property name="leftMargin"><number>8</number></property>
+   <property name="topMargin"><number>8</number></property>
+   <property name="rightMargin"><number>8</number></property>
+   <property name="bottomMargin"><number>8</number></property>
+   <item>
+    <layout class="QHBoxLayout" name="header">
+     <item>
+      <widget class="QLabel" name="labelTitle">
+       <property name="text"><string>RK3568 智能网关控制系统</string></property>
+       <property name="styleSheet"><string>font-size:18px;font-weight:800;color:white;padding:0 20px;</string></property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="h1"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>0</height></size></property></spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelStatus">
+       <property name="text"><string>连接断开</string></property>
+       <property name="styleSheet"><string>background:rgba(255,255,255,0.2);color:white;padding:4px 16px;border-radius:20px;font-size:12px;</string></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTabBar" name="tabBar">
+     <property name="styleSheet"><string>QTabBar::tab{background:#fff;border:1px solid #e5e7eb;border-bottom:none;border-radius:8px 8px 0 0;padding:8px 28px;font-size:14px;font-weight:600;color:#64748b;margin-right:2px;} QTabBar::tab:selected{background:#eef2ff;color:#5c67f2;border-bottom:3px solid #5c67f2;} QTabBar::tab:hover{background:#f8fafc;}</string></property>
+     <attribute name="title"><string>实时监控</string></attribute>
+     <attribute name="title"><string>历史数据</string></attribute>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="stack">
+     <property name="sizePolicy"><sizepolicy hsizetype="Expanding" vsizetype="Expanding"><horstretch>0</horstretch><verstretch>1</verstretch></sizepolicy></property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

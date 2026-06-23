@@ -31,6 +31,18 @@ void ConsoleSink::Write(Level level, const std::string& msg) {
     std::cout << NowTimestamp() << "[" << LevelToString(level) << "]" << msg << std::endl;
 }
 
+void MultiSink::Add(std::shared_ptr<Sink> sink) {
+    if (sink) {
+        sinks_.push_back(sink);
+    }
+}
+
+void MultiSink::Write(Level level, const std::string& msg) {
+    for (auto& sink : sinks_) {
+        sink->Write(level, msg);
+    }
+}
+
 // FileSink 实现
 FileSink::FileSink(const std::string& filename) {
     file_.open(filename, std::ios::app);

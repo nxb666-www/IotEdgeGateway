@@ -509,6 +509,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\USART1_Model.h</FilePath>
             </File>
+            <File>
+              <FileName>ESP8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\ESP8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>ESP8266.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\ESP8266.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

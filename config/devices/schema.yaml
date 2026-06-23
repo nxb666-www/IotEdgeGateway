@@ -1,0 +1,21 @@
+version: 1
+
+device:
+  required:
+    - id
+    - kind
+    - transport
+  optional:
+    - telemetry_topic
+    - command_topic
+    - description
+
+sensor:
+  kind: sensor
+  telemetry_payload:
+    value_path: data.value
+
+actuator:
+  kind: actuator
+  command_payload:
+    format: json

@@ -23,11 +23,18 @@
 #include "services/web_services/api/device_api.hpp"
 #include "services/web_services/api/rule_api.hpp"
 #include "core/control/rule_engine.hpp"
+#include "core/storage/sqlite_storage.hpp"
 #include "mongoose.h"
+#include <atomic>
+#include <chrono>
 #include <csignal>
 #include <ctime>
+#include <thread>
+#include <unordered_map>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-static bool running = true;
+static std::atomic_bool running(true);
 
 static void signal_handler(int sig) {
     running = false;
@@ -37,6 +44,40 @@ static int64_t NowMs() {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     return (int64_t)ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+}
+
+static Level ParseLogLevel(const std::string& value) {
+    if (value == "trace") return Level::Trace;
+    if (value == "debug") return Level::Debug;
+    if (value == "warn") return Level::Warn;
+    if (value == "error") return Level::Error;
+    if (value == "fatal") return Level::Fatal;
+    return Level::Info;
+}
+
+static void EnsureParentDir(const std::string& file_path) {
+    size_t pos = 0;
+    while ((pos = file_path.find('/', pos)) != std::string::npos) {
+        std::string dir = file_path.substr(0, pos);
+        if (!dir.empty()) {
+            mkdir(dir.c_str(), 0755);
+        }
+        pos++;
+    }
+}
+
+static std::string ArgValue(int argc, char* argv[], const std::string& name,
+                            const std::string& default_value) {
+    for (int i = 1; i + 1 < argc; ++i) {
+        if (argv[i] && name == argv[i]) {
+            return argv[i + 1] ? argv[i + 1] : default_value;
+        }
+    }
+    return default_value;
+}
+
+static bool JsonHasField(const std::string& json, const std::string& key) {
+    return json.find("\"" + key + "\"") != std::string::npos;
 }
 
 /**
@@ -148,16 +189,25 @@ static void LoadRulesFromFile(const std::string& file_path,
 
 int GatewayCore::Run(int argc, char* argv[]) {
     // ========== 1. 读配置 ==========
-    std::string config_path = "config/environments/development.yaml";
+    std::string config_path = ArgValue(argc, argv, "--yaml-config",
+        "config/environments/development.yaml");
 
     ConfigManager cfg;
     cfg.LoadYamlFile(config_path);
     CameraApi::SetVideoDevice(cfg.GetStringOr("camera.device", "/dev/video0"));
 
     // ========== 2. 初始化日志 ==========
-    auto sink = std::make_shared<ConsoleSink>();
+    auto sink = std::make_shared<MultiSink>();
+    sink->Add(std::make_shared<ConsoleSink>());
+    std::string log_file = ArgValue(argc, argv, "--log-file",
+        cfg.GetStringOr("paths.log_file", ""));
+    if (!log_file.empty()) {
+        EnsureParentDir(log_file);
+        sink->Add(std::make_shared<FileSink>(log_file));
+    }
     auto logger = std::make_shared<Logger>(sink);
-    logger->SetLevel(Level::Info);
+    logger->SetLevel(ParseLogLevel(ArgValue(argc, argv, "--log-level",
+        cfg.GetStringOr("logging.level", "info"))));
     logger->Info("网关启动中...");
 
     // ========== 3. 初始化设备注册表 ==========
@@ -179,7 +229,44 @@ int GatewayCore::Run(int argc, char* argv[]) {
     RuleApi::SetRuleEngine(&rule_engine);
     LoadRulesFromFile("config/rules/automation-rules.yaml", "automation", rule_engine, logger);
     LoadRulesFromFile("config/rules/alarm-rules.yaml", "alarm", rule_engine, logger);
+    std::unordered_map<std::string, int64_t> manual_control_until_ms;
+    int64_t manual_override_ms = 30000;
+    cfg.GetInt64("control.manual_override_ms", manual_override_ms);
+    RestApi::SetManualControlCallback([&](const std::string& payload) {
+        int64_t until = NowMs() + manual_override_ms;
+        if (JsonHasField(payload, "led_on")) {
+            manual_control_until_ms["led"] = until;
+            logger->Info("manual control priority: led");
+        }
+        if (JsonHasField(payload, "motor_on")) {
+            manual_control_until_ms["motor"] = until;
+            logger->Info("manual control priority: motor");
+        }
+        if (JsonHasField(payload, "buzzer")) {
+            manual_control_until_ms["buzzer"] = until;
+            logger->Info("manual control priority: buzzer");
+        }
+    });
     logger->Info("规则引擎已初始化，共 " + std::to_string(rule_engine.Rules().size()) + " 条规则");
+
+    // ========== 5.5 初始化 SQLite 存储 ==========
+    SqliteStorage sqlite;
+    bool storage_enabled = false;
+    cfg.GetBool("storage.enabled", storage_enabled);
+    if (storage_enabled) {
+        std::string db_path = cfg.GetStringOr("storage.db_path", "data/iotgw.db");
+        int64_t retention_days = 7;
+        cfg.GetInt64("storage.retention_days", retention_days);
+        EnsureParentDir(db_path);
+        if (sqlite.Open(db_path) && sqlite.InitSchema()) {
+            RestApi::SetSqliteStorage(&sqlite);
+            sqlite.CleanupOlderThan((int)retention_days);
+            logger->Info("SQLite 存储已启用: " + db_path
+                         + " (保留 " + std::to_string(retention_days) + " 天)");
+        } else {
+            logger->Warn("SQLite 初始化失败，继续运行...");
+        }
+    }
 
     // ========== 6. 初始化 MQTT 客户端 ==========
     // 这是网关和 ESP32 MQTT 设备之间的通信通道
@@ -224,6 +311,13 @@ int GatewayCore::Run(int argc, char* argv[]) {
                 registry.UpsertMqttDeviceFromTopic(topic, payload, NowMs(), device_id);
                 logger->Debug("MQTT 消息: " + topic + " → 设备 " + device_id);
 
+                // ---- 1.5 SQLite 保存历史数据 ----
+                // 只保存遥测主题，不保存命令主题
+                std::string telemetry_prefix = topic_prefix + "telemetry/";
+                if (sqlite.IsOpen() && topic.substr(0, telemetry_prefix.length()) == telemetry_prefix) {
+                    sqlite.InsertTelemetry(device_id, topic, payload, NowMs());
+                }
+
                 // ---- 2. 触发规则引擎 ----
                 // 从 payload 中提取 "value" 字段
                 // payload 格式: {"device_id":"temp","type":"sensor","data":{"value":28.4},"ts":...}
@@ -264,6 +358,12 @@ int GatewayCore::Run(int argc, char* argv[]) {
                                 // → STM32 Protocol_ParseAndExecute() 执行
                                 std::string cmd_topic;
                                 if (registry.GetCommandTopic(action.actuator_id, cmd_topic)) {
+                                    auto manual_it = manual_control_until_ms.find(action.actuator_id);
+                                    if (manual_it != manual_control_until_ms.end() && NowMs() < manual_it->second) {
+                                        logger->Info("rule skipped by manual priority: "
+                                            + rule.id + " -> " + action.actuator_id);
+                                        return;
+                                    }
                                     mqtt_client->Publish(cmd_topic, action.value);
                                     logger->Info("规则触发: " + rule.id
                                         + " → " + action.actuator_id + "=" + action.value);
@@ -395,8 +495,18 @@ int GatewayCore::Run(int argc, char* argv[]) {
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
 
+    std::thread event_loop([&]() {
+        while (running) {
+            server.Poll(50);
+        }
+    });
+
     while (running) {
-        server.Poll(50);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+
+    if (event_loop.joinable()) {
+        event_loop.join();
     }
 
     logger->Info("网关正在退出...");
