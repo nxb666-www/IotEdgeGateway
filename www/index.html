@@ -1,967 +1,689 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RK3568 智能控制中心</title>
+    <title>RK3568 智能网关</title>
     <style>
         :root {
-            --primary: #5c67f2;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-            --bg: #f0f2f5;
-            --card: #ffffff;
+            --bg: #eef2f7;
+            --panel: #ffffff;
+            --line: #d8e0eb;
+            --text: #182230;
+            --muted: #667085;
+            --primary: #2563eb;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --dark: #111827;
         }
-
+        * { box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg);
             margin: 0;
-            padding: 20px;
-            color: #333;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            font-size: 14px;
         }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        .app { min-height: 100vh; display: flex; flex-direction: column; padding: 14px; gap: 10px; }
+        .topbar {
+            height: 58px;
+            background: var(--dark);
             color: white;
-            padding: 0 25px;
-            border-radius: 16px;
-            min-height: 60px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .status-tag {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-        }
-
-        .tabs {
             display: flex;
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 16px;
-            border: 1px solid #e5e7eb;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
         }
-
+        .brand { font-size: 20px; font-weight: 900; }
+        .brand small { display: block; font-size: 12px; color: #cbd5e1; font-weight: 500; margin-top: 2px; }
+        .status-row { display: flex; align-items: center; gap: 10px; }
+        .badge {
+            min-width: 76px;
+            height: 30px;
+            padding: 0 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #1f2937;
+            border: 1px solid #374151;
+            font-weight: 800;
+            color: #dbeafe;
+        }
+        .tabs { height: 42px; background: var(--panel); border: 1px solid var(--line); display: flex; }
         .tab-btn {
-            flex: 1;
-            height: 42px;
+            height: 40px;
+            padding: 0 20px;
             border: 0;
-            background: #fff;
-            color: #64748b;
+            border-right: 1px solid var(--line);
+            background: transparent;
+            color: var(--muted);
             font-weight: 800;
             cursor: pointer;
         }
-
-        .tab-btn.active {
-            color: var(--primary);
-            background: #eef2ff;
-            border-bottom: 3px solid var(--primary);
-        }
-
-        .page {
-            display: none;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .page.active {
-            display: flex;
-        }
-
-        /* 主区域布局 */
-        .main-grid {
+        .tab-btn.active { color: var(--primary); background: #eff6ff; box-shadow: inset 0 -3px 0 var(--primary); }
+        .page { display: none; flex: 1; min-height: 0; }
+        .page.active { display: block; }
+        .monitor-grid {
             display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 20px;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-height: 0;
-        }
-
-        .card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #1f2937;
-        }
-
-        /* 视频区域 */
-        .video-box {
-            width: 100%;
-            background: #000;
-            border-radius: 12px;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-            border: 4px solid #fff;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .video-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .video-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: minmax(0, 1fr) 380px;
             gap: 10px;
-            margin-top: 15px;
+            height: calc(100vh - 132px);
+            min-height: 580px;
         }
-
-        /* 按钮通用 */
-        .btn {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            font-size: 13px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
-
-        .btn-cap {
-            background: var(--success);
-        }
-
-        .btn-rec {
-            background: var(--danger);
-        }
-
-        .btn-stream-start {
-            background: var(--info);
-        }
-
-        .btn-stream-stop {
-            background: #64748b;
-        }
-
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* 控制面板 */
-        .control-item {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #edf2f7;
-        }
-
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        input[type=range] {
-            width: 100%;
-            accent-color: var(--primary);
-        }
-
-        .dir-btns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .btn-dir {
-            background: #e2e8f0;
-            color: #64748b;
-            padding: 6px;
-            border-radius: 6px;
-            border: 2px solid transparent;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .btn-dir.active {
-            background: #fff;
-            color: var(--primary);
-            border-color: var(--primary);
-            font-weight: bold;
-        }
-
-        /* 开关手柄 */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e1;
-            transition: .4s;
-            border-radius: 20px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px;
-            width: 14px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background-color: var(--primary);
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(20px);
-        }
-
-        /* 日志窗口 - 填满剩余空间 */
-        .log-container {
-            background: #0f172a;
-            color: #38bdf8;
-            border-radius: 12px;
-            padding: 15px;
-            flex: 1;
-            overflow-y: auto;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            line-height: 1.5;
-            border: 1px solid #1e293b;
-        }
-
-        .log-line {
-            margin-bottom: 4px;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 2px;
-        }
-
-        .log-time {
-            color: #94a3b8;
-            margin-right: 8px;
-        }
-
-        /* 底部传感器卡片 */
-        .sensor-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-
-        .s-card {
-            background: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-        }
-
-        .s-val {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--primary);
-            margin: 4px 0;
-        }
-
-        .s-unit {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .history-tools {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .history-tools select {
-            height: 36px;
-            border: 1px solid #dbe3ef;
-            border-radius: 8px;
-            padding: 0 8px;
-            background: #fff;
-        }
-
-        .history-table-wrap {
-            max-height: 180px;
-            overflow: auto;
-            border: 1px solid #edf2f7;
-            border-radius: 8px;
-        }
-
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-        .history-table th,
-        .history-table td {
-            padding: 8px;
-            border-bottom: 1px solid #edf2f7;
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        .history-table th {
-            background: #f8fafc;
-            color: #64748b;
-            position: sticky;
-            top: 0;
-        }
-
-        .history-empty {
-            text-align: center;
-            color: #94a3b8;
-        }
-
         .history-grid {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 20px;
-            width: 100%;
-            min-height: 0;
+            grid-template-columns: 300px minmax(0, 1fr);
+            gap: 10px;
+            height: calc(100vh - 132px);
+            min-height: 580px;
         }
-
-        .history-side {
+        .stack { min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            min-height: 0;
         }
-
-        .history-side label {
-            font-size: 13px;
-            color: #64748b;
-            font-weight: 700;
+        .card-head {
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            border-bottom: 1px solid var(--line);
+            font-weight: 900;
         }
-
-        .history-side select {
-            width: 100%;
-            height: 36px;
-            margin: 6px 0 12px;
-            border: 1px solid #dbe3ef;
-            border-radius: 8px;
-            padding: 0 8px;
-            background: #fff;
+        .card-body { padding: 12px; min-height: 0; }
+        .grow { flex: 1; }
+        .sensor-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .sensor {
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            padding: 12px;
+            text-align: center;
         }
-
-        .history-chart {
-            height: 220px;
-            width: 100%;
+        .sensor .name { color: var(--muted); font-size: 12px; font-weight: 800; }
+        .sensor .value { margin-top: 6px; font-size: 26px; font-weight: 900; }
+        .sensor .unit { margin-top: 2px; color: #94a3b8; font-size: 12px; }
+        .video-frame {
+            flex: 1;
+            min-height: 0;
+            background: #020617;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #94a3b8;
+            font-weight: 800;
+        }
+        .video-frame img { width: 100%; height: 100%; object-fit: contain; display: none; }
+        .video-actions, .control-actions, .media-actions { display: grid; gap: 8px; }
+        .video-actions { grid-template-columns: repeat(4, 1fr); }
+        .control-actions { grid-template-columns: repeat(2, 1fr); }
+        .media-actions { grid-template-columns: repeat(3, 1fr); }
+        button, select, input { font: inherit; }
+        .btn {
+            height: 34px;
+            border: 0;
+            color: white;
+            background: var(--primary);
+            cursor: pointer;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 14px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn.secondary { background: #475569; }
+        .btn.success { background: var(--success); }
+        .btn.danger { background: var(--danger); }
+        .btn.warning { background: var(--warning); }
+        .btn.active { outline: 3px solid rgba(37, 99, 235, 0.24); box-shadow: inset 0 0 0 2px #bfdbfe; }
+        .btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn.small { height: 28px; padding: 0 10px; font-size: 12px; }
+        .actions-inline { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .switch { accent-color: var(--primary); }
+        .control-item { padding: 12px; border: 1px solid var(--line); background: #f8fafc; margin-bottom: 10px; }
+        .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .row + .row { margin-top: 10px; }
+        .row.active { color: var(--primary); }
+        .label { font-weight: 900; }
+        input[type="range"] { width: 100%; }
+        .switch { width: 20px; height: 20px; }
+        .log-box {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            background: #0f172a;
+            color: #7dd3fc;
+            padding: 10px;
+            white-space: pre-wrap;
+            font-family: Consolas, "Microsoft YaHei", monospace;
+            font-size: 12px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 9px 10px; border-bottom: 1px solid #edf2f7; text-align: left; }
+        th { background: #f8fafc; color: #475569; font-size: 12px; }
+        .table-wrap { overflow: auto; min-height: 0; }
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.58);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 20;
+        }
+        .modal.show { display: flex; }
+        .modal-panel {
+            width: min(980px, 96vw);
+            max-height: 88vh;
+            background: white;
+            border: 1px solid var(--line);
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-body { padding: 12px; overflow: auto; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .photo-card { border: 1px solid var(--line); color: var(--text); text-decoration: none; background: #f8fafc; }
+        .photo-card img { width: 100%; height: 110px; object-fit: cover; display: block; }
+        .photo-card div { padding: 8px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .photo-card .btn { width: calc(100% - 16px); margin: 0 8px 8px; }
+        @media (max-width: 900px) {
+            .monitor-grid, .history-grid { grid-template-columns: 1fr; height: auto; }
+            .sensor-grid, .video-actions { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
-
 <body>
-
-    <div class="header">
-        <div style="font-size: 20px; font-weight: 800; letter-spacing: 1px;">RK3568 智能网关控制系统</div>
-        <div class="status-tag" id="conn_status">设备在线</div>
-    </div>
-
-    <div class="tabs">
-        <button class="tab-btn active" data-page="monitor_page">实时监控</button>
-        <button class="tab-btn" data-page="history_page">历史数据</button>
-    </div>
-
-    <section id="monitor_page" class="page active">
-    <div class="main-grid">
-        <!-- 左侧 -->
-        <div class="column">
-            <div class="card" style="flex: 1;">
-                <div class="card-title">实时画面监控</div>
-                <div class="video-box">
-                    <img id="videoPlayer" src="" alt="视频流">
-                </div>
-                <div class="video-bar">
-                    <button id="streamStartBtn" class="btn btn-stream-start">开始推流</button>
-                    <button id="streamStopBtn" class="btn btn-stream-stop" disabled>停止推流</button>
-                    <button id="snapshotBtn" class="btn btn-cap">抓拍照片</button>
-                    <button id="recordBtn" class="btn btn-rec">视频录制</button>
-                </div>
-            </div>
-
-            <div class="sensor-row">
-                <div class="s-card">
-                    <div>温度</div>
-                    <div class="s-val" id="val_temp">--</div>
-                    <div class="s-unit">°C</div>
-                </div>
-                <div class="s-card">
-                    <div>湿度</div>
-                    <div class="s-val" id="val_humi">--</div>
-                    <div class="s-unit">% RH</div>
-                </div>
-                <div class="s-card">
-                    <div>光照强度</div>
-                    <div class="s-val" id="val_light">--</div>
-                    <div class="s-unit">Lux</div>
-                </div>
-                <div class="s-card">
-                    <div>红外检测</div>
-                    <div class="s-val" id="val_ir" style="font-size:16px;">--</div>
-                    <div class="s-unit">Status</div>
-                </div>
-            </div>
+<div class="app">
+    <header class="topbar">
+        <div class="brand">RK3568 智能网关<small>Web 控制中心</small></div>
+        <div class="status-row">
+            <div class="badge" id="transport_status" title="当前通信方式">MQTT</div>
+            <div class="badge" id="conn_status">连接中</div>
         </div>
+    </header>
 
-        <!-- 右侧 -->
-        <div class="column">
-            <!-- 控制卡片 -->
-            <div class="card">
-                <div class="card-title">硬件外设控制</div>
+    <nav class="tabs">
+        <button class="tab-btn active" data-page="monitor">实时监控</button>
+        <button class="tab-btn" data-page="history">历史记录</button>
+    </nav>
 
-                <div class="control-item">
-                    <div class="label-row"><span>LED 照明灯</span><label class="switch"><input type="checkbox" id="led_sw"
-                                onchange="updateLed()"><span class="slider"></span></label></div>
-                    <input type="range" id="led_br" value="50" onchange="updateLed()">
-                </div>
-
-                <div class="control-item">
-                    <div class="label-row"><span>直流电机控制</span><label class="switch"><input type="checkbox" id="motor_sw"
-                                onchange="updateMotor()"><span class="slider"></span></label></div>
-                    <input type="range" id="motor_sp" value="30" onchange="updateMotor()">
-                    <div class="dir-btns">
-                        <button id="dir_f" class="btn-dir active" onclick="setMotorDirUser(0)">正向旋转</button>
-                        <button id="dir_r" class="btn-dir" onclick="setMotorDirUser(1)">反向旋转</button>
+    <section id="monitor" class="page active">
+        <div class="monitor-grid">
+            <div class="stack">
+                <div class="card">
+                    <div class="card-head"><span>实时数据</span><span id="sensor_update_time" style="font-size:12px;color:var(--muted);">等待数据</span></div>
+                    <div class="card-body">
+                        <div class="sensor-grid">
+                            <div class="sensor"><div class="name">温度</div><div class="value" id="val_temp">--</div><div class="unit">℃</div></div>
+                            <div class="sensor"><div class="name">湿度</div><div class="value" id="val_humi">--</div><div class="unit">%RH</div></div>
+                            <div class="sensor"><div class="name">光照</div><div class="value" id="val_light">--</div><div class="unit">Lux</div></div>
+                            <div class="sensor"><div class="name">红外</div><div class="value" id="val_ir">--</div><div class="unit">Status</div></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="control-item" style="border-left: 4px solid var(--warning); margin-bottom: 0;">
-                    <div class="label-row"><span>紧急蜂鸣报警</span><label class="switch"><input type="checkbox"
-                                id="buzzer_sw" onchange="cmd('buzzer', this.checked?'on':'off')"><span
-                                class="slider"></span></label></div>
+                <div class="card grow">
+                    <div class="card-head"><span>实时视频</span><span id="video_state" style="font-size:12px;color:var(--muted);">未启动</span></div>
+                    <div class="video-frame" id="videoBox">
+                        <span id="videoHint">点击“开始推流”后显示画面</span>
+                        <img id="videoPlayer" alt="视频画面">
+                    </div>
+                    <div class="card-body">
+                        <div class="video-actions">
+                            <button class="btn" id="streamStartBtn">开始推流</button>
+                            <button class="btn secondary" id="streamStopBtn" disabled>停止推流</button>
+                            <button class="btn success" id="snapshotBtn">抓拍</button>
+                            <button class="btn danger" id="recordBtn">录制</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- 日志卡片 -->
-            <div class="card" style="flex: 1; min-height: 0;">
-                <div class="card-title">系统运行日志</div>
-                <div class="log-container" id="log_box">
-                    <div class="log-line"><span class="log-time">[00:00:00]</span>系统初始化完成...</div>
+            <div class="stack">
+                <div class="card">
+                    <div class="card-head">外设控制</div>
+                    <div class="card-body">
+                        <div class="control-item">
+                            <div class="row"><span class="label">LED 照明</span><input class="switch" type="checkbox" id="led_sw"></div>
+                            <div class="row"><input type="range" id="led_br" min="0" max="100" value="50"><span id="led_text">50%</span></div>
+                        </div>
+                        <div class="control-item">
+                            <div class="row"><span class="label">直流风扇</span><input class="switch" type="checkbox" id="motor_sw"></div>
+                            <div class="row"><input type="range" id="motor_sp" min="0" max="100" value="30"><span id="motor_text">30%</span></div>
+                            <div class="control-actions">
+                                <button class="btn secondary" id="dir_f">正转</button>
+                                <button class="btn secondary" id="dir_r">反转</button>
+                            </div>
+                        </div>
+                        <div class="control-item" style="margin-bottom:0;">
+                            <div class="row"><span class="label">蜂鸣器</span><input class="switch" type="checkbox" id="buzzer_sw"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card grow">
+                    <div class="card-head">运行日志</div>
+                    <div class="log-box" id="log_box"></div>
                 </div>
             </div>
         </div>
-    </div>
     </section>
 
-    <section id="history_page" class="page">
+    <section id="history" class="page">
         <div class="history-grid">
-            <div class="history-side">
+            <aside class="stack">
                 <div class="card">
-                    <div class="card-title">查询条件</div>
-                    <label for="history_device">选择设备</label>
-                    <select id="history_device">
-                        <option value="temp">温度传感器</option>
-                        <option value="humi">湿度传感器</option>
-                        <option value="light">光照传感器</option>
-                        <option value="ir">红外传感器</option>
-                    </select>
-                    <label for="history_limit">显示条数</label>
-                    <select id="history_limit">
-                        <option value="20">最近 20 条</option>
-                        <option value="50">最近 50 条</option>
-                        <option value="100">最近 100 条</option>
-                    </select>
-                    <button id="historyQueryBtn" class="btn btn-stream-start">查询历史数据</button>
-                </div>
-                <div class="card">
-                    <div class="card-title">最新数据</div>
-                    <div class="sensor-row" style="grid-template-columns: 1fr 1fr;">
-                        <div class="s-card"><div>温度</div><div class="s-val" id="latest_temp">--</div><div class="s-unit">°C</div></div>
-                        <div class="s-card"><div>湿度</div><div class="s-val" id="latest_humi">--</div><div class="s-unit">% RH</div></div>
-                        <div class="s-card"><div>光照</div><div class="s-val" id="latest_light">--</div><div class="s-unit">Lux</div></div>
-                        <div class="s-card"><div>红外</div><div class="s-val" id="latest_ir" style="font-size:16px;">--</div><div class="s-unit">Status</div></div>
+                    <div class="card-head">历史查询</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <span>设备</span>
+                            <select id="history_device">
+                                <option value="temp">温度</option>
+                                <option value="humi">湿度</option>
+                                <option value="light">光照</option>
+                                <option value="ir">红外</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <span>条数</span>
+                            <input id="history_limit" type="number" min="1" max="200" value="20" style="width:90px;">
+                        </div>
+                        <button class="btn" id="historyQueryBtn" style="width:100%;margin-top:12px;">查询历史</button>
                     </div>
                 </div>
-            </div>
-            <div class="column">
                 <div class="card">
-                    <div class="card-title">数据可视化</div>
-                    <canvas id="history_chart" class="history-chart" width="900" height="220"></canvas>
-                </div>
-                <div class="card" style="flex: 1; min-height: 0;">
-                    <div class="card-title">数据库历史遥测数据</div>
-                    <div class="history-table-wrap" style="flex: 1;">
-                        <table class="history-table">
-                            <thead><tr><th>数值</th><th>设备时间戳</th><th>入库时间</th></tr></thead>
-                            <tbody id="history_body">
-                                <tr><td colspan="3" class="history-empty">暂无历史数据</td></tr>
-                            </tbody>
-                        </table>
+                    <div class="card-head">媒体与日志</div>
+                    <div class="card-body">
+                        <div class="media-actions">
+                            <button class="btn success" id="photosBtn">照片</button>
+                            <button class="btn warning" id="videosBtn">视频</button>
+                            <button class="btn secondary" id="logsBtn">日志</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </aside>
+            <main class="card">
+                <div class="card-head">数据历史</div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>数值</th><th>设备时间</th><th>入库时间</th></tr></thead>
+                        <tbody id="history_body"><tr><td colspan="3">暂无数据</td></tr></tbody>
+                    </table>
+                </div>
+            </main>
         </div>
     </section>
+</div>
 
-    <script>
-        // ========== 视频流核心配置 ==========
-        const LIVE_JPG_URL = '/stream/live.jpg';
-        const API_START_STREAM = '/api/camera/start_stream';
-        const API_STOP_STREAM = '/api/camera/stop_stream';
-        const API_START_RECORD = '/api/camera/start_record';
-        const API_STOP_RECORD = '/api/camera/stop_record';
-        const API_SNAPSHOT = '/api/camera/snapshot';
+<div class="modal" id="mediaModal">
+    <div class="modal-panel">
+        <div class="card-head"><span id="modalTitle">记录</span><button class="btn secondary" id="modalClose">关闭</button></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
 
-        // 全局状态
-        let streamStarted = false;
-        let recordStarted = false;
-        let frameTimer = null;
-        let frameTimeoutTimer = null;
-        let frameSeq = 0;
-        let frameLoading = false;
+<script>
+const $ = id => document.getElementById(id);
+const state = { currentDir: 0, controlBusy: false, controlPending: false, streaming: false, recording: false, recordBusy: false, statusBusy: false };
+const api = {
+    startStream: '/api/camera/start_stream',
+    stopStream: '/api/camera/stop_stream',
+    snapshot: '/api/camera/snapshot',
+    startRecord: '/api/camera/start_record',
+    stopRecord: '/api/camera/stop_record'
+};
 
-        // DOM元素
-        const video = document.getElementById('videoPlayer');
-        const streamStartBtn = document.getElementById('streamStartBtn');
-        const streamStopBtn = document.getElementById('streamStopBtn');
-        const snapshotBtn = document.getElementById('snapshotBtn');
-        const recordBtn = document.getElementById('recordBtn');
-        const historyDevice = document.getElementById('history_device');
-        const historyLimit = document.getElementById('history_limit');
-        const historyQueryBtn = document.getElementById('historyQueryBtn');
-        const historyBody = document.getElementById('history_body');
-        const historyChart = document.getElementById('history_chart');
+function log(text) {
+    const now = new Date().toLocaleTimeString();
+    const box = $('log_box');
+    box.textContent += `[${now}] ${text}\n`;
+    box.scrollTop = box.scrollHeight;
+}
 
-        let currentDir = 0;
-        let statusBusy = false;
-        let controlBusy = false;
-        let controlPending = false;
+async function getJson(url, options = {}, timeoutMs = 5000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        const res = await fetch(url, { ...options, signal: controller.signal });
+        const text = await res.text();
+        let data = {};
+        try { data = text ? JSON.parse(text) : {}; } catch (_) {}
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        return data;
+    } finally {
+        clearTimeout(timer);
+    }
+}
 
-        // 写入日志函数（增强，兼容视频流日志）
-        function addLog(msg) {
-            const box = document.getElementById('log_box');
-            const time = new Date().toLocaleTimeString();
-            const line = document.createElement('div');
-            line.className = 'log-line';
-            line.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
-            box.appendChild(line);
-            box.scrollTop = box.scrollHeight; // 自动滚动到底部
-        }
+function formatValue(id, value) {
+    if (value === undefined || value === null || value === '') return '--';
+    if (id === 'ir') return Number(value) === 1 ? '遮挡' : '安全';
+    const n = Number(value);
+    if (!Number.isFinite(n)) return String(value);
+    return (id === 'temp' || id === 'humi') ? n.toFixed(1) : String(n);
+}
 
-        // 通用请求函数
-        async function sendCommand(url, options = {}) {
-            try {
-                const res = await fetch(url, options);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.json();
-            } catch (err) {
-                addLog(`接口请求失败: ${err.message}`);
-                console.error('API Error:', err);
-                throw err;
-            }
-        }
+function formatTime(v) {
+    if (v === undefined || v === null || v === '') return '--';
+    const n = Number(v);
+    if (!Number.isFinite(n) || n <= 0) return String(v);
+    const ms = n > 1000000000000 ? n : n * 1000;
+    return new Date(ms).toLocaleString();
+}
 
-        function nextFrameUrl() {
-            return `${LIVE_JPG_URL}?t=${Date.now()}`;
-        }
+function formatSize(bytes) {
+    const n = Number(bytes) || 0;
+    if (n < 1024) return `${n} B`;
+    if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+    return `${(n / 1024 / 1024).toFixed(1)} MB`;
+}
 
-        function clearFrameTimeout() {
-            if (frameTimeoutTimer) {
-                clearTimeout(frameTimeoutTimer);
-                frameTimeoutTimer = null;
-            }
-        }
+function setSensor(id, value) {
+    const text = formatValue(id, value);
+    const val = $(`val_${id}`);
+    if (val) val.textContent = text;
+    if (id === 'ir' && val) val.style.color = Number(value) === 1 ? 'var(--danger)' : 'var(--success)';
+    $('sensor_update_time').textContent = `更新 ${new Date().toLocaleTimeString()}`;
+}
 
-        function scheduleNextFrame(delay) {
-            if (!streamStarted) return;
-            if (frameTimer) clearTimeout(frameTimer);
-            frameTimer = setTimeout(loadNextFrame, delay);
-        }
+async function pollStatus() {
+    if (state.statusBusy) return;
+    state.statusBusy = true;
+    try {
+        const data = await getJson('/api/status', {}, 3000);
+        ['temp', 'humi', 'light', 'ir'].forEach(id => setSensor(id, data[id]));
+        $('conn_status').textContent = '在线';
+    } catch (err) {
+        $('conn_status').textContent = '离线';
+    } finally {
+        state.statusBusy = false;
+    }
+}
 
-        function loadNextFrame() {
-            if (!streamStarted || frameLoading) return;
-            const seq = ++frameSeq;
-            const img = new Image();
-            frameLoading = true;
-            clearFrameTimeout();
-            img.onload = () => {
-                if (streamStarted && seq === frameSeq) {
-                    video.src = img.src;
-                }
-                frameLoading = false;
-                clearFrameTimeout();
-                scheduleNextFrame(100);
-            };
-            img.onerror = () => {
-                frameLoading = false;
-                clearFrameTimeout();
-                scheduleNextFrame(300);
-            };
-            frameTimeoutTimer = setTimeout(() => {
-                if (streamStarted && seq === frameSeq) {
-                    frameLoading = false;
-                    scheduleNextFrame(300);
-                }
-            }, 1500);
-            img.src = nextFrameUrl();
-        }
+function payloadFromUi() {
+    return {
+        led_on: $('led_sw').checked ? 1 : 0,
+        led_br: Number($('led_br').value),
+        motor_on: $('motor_sw').checked ? 1 : 0,
+        motor_sp: Number($('motor_sp').value),
+        motor_dir: state.currentDir,
+        buzzer: $('buzzer_sw').checked ? 1 : 0
+    };
+}
 
-        // ========== 视频流控制逻辑 ==========
-        async function startStream() {
-            if (streamStarted) return;
-            streamStarted = true;
-            streamStartBtn.disabled = true;
-            try {
-                addLog('正在启动视频流...');
-                const res = await sendCommand(API_START_STREAM);
-                addLog(`视频流已启动(${res.backend || 'ffmpeg'}), 正在获取画面...`);
-                loadNextFrame();
-                streamStopBtn.disabled = false;
-            } catch (err) {
-                streamStarted = false;
-                streamStartBtn.disabled = false;
-                addLog(`视频流启动失败: ${err.message}`);
-            }
-        }
-
-        async function stopStream() {
-            if (!streamStarted) return;
-            try {
-                addLog('正在停止视频流...');
-                if (frameTimer) clearTimeout(frameTimer);
-                clearFrameTimeout();
-                frameLoading = false;
-                video.src = '';
-                streamStarted = false;
-                streamStartBtn.disabled = false;
-                streamStopBtn.disabled = true;
-                await sendCommand(API_STOP_STREAM);
-                addLog('视频流已停止');
-            } catch (err) {
-                addLog(`停止视频流出错: ${err.message}`);
-            }
-        }
-
-        async function takeSnapshot() {
-            try {
-                addLog('正在拍照...');
-                const res = await sendCommand(API_SNAPSHOT);
-                addLog(`拍照${res.result === 'ok' ? '成功' : '失败'}，文件: ${res.file || '/www'}`);
-            } catch (err) {
-                addLog(`拍照失败: ${err.message}`);
-            }
-        }
-
-        async function toggleRecord() {
-            if (!streamStarted) {
-                addLog('请先启动视频流再进行录像');
-                return;
-            }
-
-            if (!recordStarted) {
-                // 开始录像
-                try {
-                    addLog('正在启动录像...');
-                    const res = await sendCommand(API_START_RECORD);
-                    recordStarted = true;
-                    recordBtn.innerHTML = '停止录制';
-                    addLog(`录像已开始，文件: ${res.file || '/www'}`);
-                } catch (err) {
-                    addLog(`录像启动失败: ${err.message}`);
-                }
-            } else {
-                // 停止录像
-                try {
-                    addLog('正在停止录像...');
-                    const res = await sendCommand(API_STOP_RECORD);
-                    recordStarted = false;
-                    recordBtn.innerHTML = '视频录制';
-                    addLog(`录像${res.result === 'ok' ? '已保存' : '保存失败'}，文件: ${res.file || '/www'}`);
-                } catch (err) {
-                    addLog(`停止录像出错: ${err.message}`);
-                }
-            }
-        }
-
-      async function cmd() {
-    if (controlBusy) {
-        controlPending = true;
+async function sendControl() {
+    if (state.controlBusy) {
+        state.controlPending = true;
         return;
     }
-
-    controlBusy = true;
-    controlPending = false;
-
-    const payload = {
-        led_on: document.getElementById('led_sw').checked ? 1 : 0,
-        led_br: parseInt(document.getElementById('led_br').value),
-        motor_on: document.getElementById('motor_sw').checked ? 1 : 0,
-        motor_sp: parseInt(document.getElementById('motor_sp').value),
-        motor_dir: currentDir,
-        buzzer: document.getElementById('buzzer_sw').checked ? 1 : 0
-    };
-
-    const msg = {
-        type: "control",
-        payload: payload
-    };
-
-    addLog(`发送指令: ${JSON.stringify(msg)}`);
-
+    state.controlBusy = true;
+    state.controlPending = false;
+    const body = { type: 'control', payload: payloadFromUi() };
     try {
-        const res = await fetch('/api/control', {
+        const res = await getJson('/api/control', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(msg)
-        });
-        if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
-        }
+            body: JSON.stringify(body)
+        }, 3000);
+        log(`控制已发布到 MQTT：${res.topic || 'iotgw/dev/cmd/control'}，重复 ${res.repeat || 1} 次`);
     } catch (err) {
-        addLog(`指令发送失败: ${err.message}`);
+        log(`控制失败：${err.message}`);
     } finally {
-        controlBusy = false;
-        if (controlPending) {
-            setTimeout(cmd, 80);
-        }
+        state.controlBusy = false;
+        if (state.controlPending) setTimeout(sendControl, 120);
     }
 }
 
-
-        function updateLed() {
-            const sw = document.getElementById('led_sw').checked ? '开启' : '关闭';
-            const br = document.getElementById('led_br').value;
-            addLog(`LED调整: ${sw}, 亮度 ${br}%`);
-            cmd();
-        }
-
-        function setMotorDirUI(dir) {
-    currentDir = dir;
-
-    document.getElementById('dir_f').classList.toggle('active', dir === 0);
-    document.getElementById('dir_r').classList.toggle('active', dir === 1);
+async function startStream() {
+    if (state.streaming) return;
+    try {
+        $('streamStartBtn').disabled = true;
+        const res = await getJson(api.startStream, {}, 8000);
+        state.streaming = true;
+        $('streamStopBtn').disabled = false;
+        $('video_state').textContent = `运行中 ${res.device || ''}`;
+        $('videoHint').style.display = 'none';
+        $('videoPlayer').style.display = 'block';
+        $('videoPlayer').src = `${res.path || '/api/camera/stream'}?t=${Date.now()}`;
+        log(`视频推流已启动：${res.backend || 'ffmpeg'} ${res.device || ''}`);
+    } catch (err) {
+        $('streamStartBtn').disabled = false;
+        $('video_state').textContent = '启动失败';
+        log(`视频启动失败：${err.message}，请看 data/logs/ffmpeg_stream.log`);
+    }
 }
 
-function setMotorDirUser(dir) {
-    setMotorDirUI(dir);
-    addLog(`电机方向切换: ${dir === 0 ? '正转' : '反转'}`);
-    cmd();   // 只有用户操作才发
+async function stopStream() {
+    state.streaming = false;
+    $('videoPlayer').src = '';
+    $('videoPlayer').style.display = 'none';
+    $('videoHint').style.display = 'inline';
+    $('streamStartBtn').disabled = false;
+    $('streamStopBtn').disabled = true;
+    $('video_state').textContent = '未启动';
+    try { await getJson(api.stopStream, {}, 3000); } catch (_) {}
+    log('视频推流已停止');
 }
 
-
-
-        function updateMotor() {
-    const sw = document.getElementById('motor_sw').checked ? '开启' : '关闭';
-    const sp = document.getElementById('motor_sp').value;
-
-    cmd();
-
-    addLog(
-        `电机控制: ${sw}, 速度 ${sp}%, 方向 ${currentDir === 0 ? '正转' : '反转'}`
-    );
+async function takeSnapshot() {
+    try {
+        const res = await getJson(api.snapshot, {}, 8000);
+        log(`抓拍完成，已保存到：${res.file || ''}。可在“历史记录 / 照片”中查看和下载。`);
+    } catch (err) {
+        log(`抓拍失败：${err.message}`);
+    }
 }
 
-        function switchPage(pageId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.page === pageId);
-            });
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.toggle('active', page.id === pageId);
-            });
-            if (pageId === 'history_page') {
-                queryHistory();
-            }
+async function toggleRecord() {
+    if (state.recordBusy) return;
+    state.recordBusy = true;
+    $('recordBtn').disabled = true;
+    try {
+        const url = state.recording ? api.stopRecord : api.startRecord;
+        const res = await getJson(url, {}, state.recording ? 30000 : 8000);
+        state.recording = !state.recording;
+        $('recordBtn').textContent = state.recording ? '停止录制' : '录制';
+        log(`${state.recording ? '开始录制' : '录制结束，已保存到'}：${res.file || ''}${state.recording ? '' : '。可在“历史记录 / 视频”中下载。'}`);
+    } catch (err) {
+        log(`录制操作失败：${err.message}`);
+    } finally {
+        state.recordBusy = false;
+        $('recordBtn').disabled = false;
+    }
+}
+
+async function queryHistory() {
+    const id = $('history_device').value;
+    const limit = $('history_limit').value;
+    const body = $('history_body');
+    try {
+        const data = await getJson(`/api/history?device_id=${encodeURIComponent(id)}&limit=${limit}`);
+        const items = Array.isArray(data.items) ? data.items : [];
+        if (!items.length) {
+            body.innerHTML = '<tr><td colspan="3">暂无数据</td></tr>';
+            return;
         }
+        body.innerHTML = items.map(item => `
+            <tr>
+                <td>${Number(item.value).toFixed(2)}</td>
+                <td>${formatTime(item.ts)}</td>
+                <td>${formatTime(item.created_at)}</td>
+            </tr>
+        `).join('');
+        log(`历史数据 ${id}：${items.length} 条`);
+    } catch (err) {
+        body.innerHTML = `<tr><td colspan="3">查询失败：${err.message}</td></tr>`;
+    }
+}
 
-        function formatTime(v) {
-            if (v === undefined || v === null || v === '') return '--';
-            const n = Number(v);
-            if (!Number.isFinite(n) || n <= 0) return String(v);
-            const ms = n > 1000000000000 ? n : n * 1000;
-            return new Date(ms).toLocaleString();
-        }
+function openModal(title, html) {
+    $('modalTitle').textContent = title;
+    $('modalBody').innerHTML = html;
+    $('mediaModal').classList.add('show');
+}
 
-        function drawHistory(values, title) {
-            if (!historyChart) return;
-            const ctx = historyChart.getContext('2d');
-            const w = historyChart.width;
-            const h = historyChart.height;
-            ctx.clearRect(0, 0, w, h);
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(0, 0, w, h);
+async function deletePhoto(name) {
+    if (!confirm(`删除照片 ${name}？`)) return;
+    await getJson(`/api/camera/delete_photo/${encodeURIComponent(name)}`, {}, 5000);
+    log(`已删除照片：${name}`);
+    await loadPhotos();
+}
 
-            const left = 50, right = w - 18, top = 32, bottom = h - 24;
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= 4; i++) {
-                const y = top + (bottom - top) * i / 4;
-                ctx.beginPath();
-                ctx.moveTo(left, y);
-                ctx.lineTo(right, y);
-                ctx.stroke();
-            }
+async function deleteVideo(name) {
+    if (!confirm(`删除视频 ${name}？`)) return;
+    await getJson(`/api/camera/delete_video/${encodeURIComponent(name)}`, {}, 5000);
+    log(`已删除视频：${name}`);
+    await loadVideos();
+}
 
-            ctx.fillStyle = '#64748b';
-            ctx.font = '14px sans-serif';
-            ctx.fillText(title || '历史趋势', left, 20);
-            if (!values.length) {
-                ctx.fillStyle = '#94a3b8';
-                ctx.fillText('暂无历史数据', w / 2 - 42, h / 2);
-                return;
-            }
+async function clearLogs() {
+    if (!confirm('清理所有运行日志？')) return;
+    const res = await getJson('/api/camera/clear_logs', {}, 5000);
+    openModal('运行日志', `<p>已清空 ${res.cleared || 0} 个日志文件内容，文件会继续保留给服务写入。</p>`);
+    log(`已清空日志：${res.cleared || 0} 个文件`);
+}
 
-            const min = Math.min(...values);
-            const max = Math.max(...values);
-            const span = max === min ? 1 : max - min;
-            ctx.strokeStyle = '#5c67f2';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            values.forEach((value, i) => {
-                const x = values.length === 1 ? (left + right) / 2 : left + (right - left) * i / (values.length - 1);
-                const y = bottom - (value - min) / span * (bottom - top);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-        }
+async function loadPhotos() {
+    try {
+        const data = await getJson('/api/camera/photos');
+        const photos = Array.isArray(data.photos) ? data.photos.sort((a, b) => b.mtime - a.mtime) : [];
+        if (!photos.length) return openModal('照片记录', '<p>暂无照片</p>');
+        openModal('照片记录', `<div class="photo-grid">${photos.map(p => `
+            <div class="photo-card">
+            <a href="/data/media/photos/${encodeURIComponent(p.name)}" target="_blank">
+                <img src="/data/media/photos/${encodeURIComponent(p.name)}" alt="${p.name}">
+            </a>
+            <div>${p.name}</div>
+            <button class="btn danger small" onclick="deletePhoto('${p.name.replace(/'/g, "\\'")}')">删除</button>
+            </div>`).join('')}</div>`);
+    } catch (err) {
+        openModal('照片记录', `<p>加载失败：${err.message}</p>`);
+    }
+}
 
-        async function queryHistory() {
-            const deviceId = historyDevice.value;
-            const limit = historyLimit.value;
-            historyQueryBtn.disabled = true;
-            try {
-                const data = await sendCommand(`/api/history?device_id=${encodeURIComponent(deviceId)}&limit=${limit}`);
-                const items = Array.isArray(data.items) ? data.items.slice().reverse() : [];
-                if (!items.length) {
-                    historyBody.innerHTML = '<tr><td colspan="3" class="history-empty">暂无历史数据</td></tr>';
-                    drawHistory([], historyDevice.options[historyDevice.selectedIndex].text);
-                    addLog('历史数据查询完成: 0 条');
-                    return;
-                }
+async function loadVideos() {
+    try {
+        const data = await getJson('/api/camera/videos');
+        const videos = Array.isArray(data.videos) ? data.videos.sort((a, b) => b.mtime - a.mtime) : [];
+        if (!videos.length) return openModal('视频记录', '<p>暂无视频</p>');
+        openModal('视频记录', `
+            <table><thead><tr><th>文件</th><th>大小</th><th>时间</th><th>操作</th></tr></thead>
+            <tbody>${videos.map(v => `
+                <tr><td>${v.name}</td><td>${formatSize(v.size)}</td><td>${formatTime(v.mtime)}</td>
+                <td><span class="actions-inline"><a class="btn secondary small" href="/data/media/videos/${encodeURIComponent(v.name)}" download>下载</a>
+                <button class="btn danger small" onclick="deleteVideo('${v.name.replace(/'/g, "\\'")}')">删除</button></span></td></tr>`).join('')}</tbody></table>`);
+    } catch (err) {
+        openModal('视频记录', `<p>加载失败：${err.message}</p>`);
+    }
+}
 
-                historyBody.innerHTML = items.map(item => {
-                    const value = Number(item.value);
-                    const valueText = Number.isFinite(value) ? value.toFixed(2) : '--';
-                    return `<tr><td>${valueText}</td><td>${formatTime(item.ts)}</td><td>${formatTime(item.created_at)}</td></tr>`;
-                }).join('');
-                drawHistory(items.map(item => Number(item.value)).filter(Number.isFinite),
-                    historyDevice.options[historyDevice.selectedIndex].text);
-                addLog(`历史数据查询完成: ${items.length} 条`);
-            } catch (err) {
-                historyBody.innerHTML = '<tr><td colspan="3" class="history-empty">历史数据查询失败</td></tr>';
-                addLog(`历史数据查询失败: ${err.message}`);
-            } finally {
-                historyQueryBtn.disabled = false;
-            }
-        }
+async function loadLogs() {
+    try {
+        const data = await getJson('/api/camera/logs');
+        const logs = Array.isArray(data.logs) ? data.logs.sort((a, b) => b.mtime - a.mtime) : [];
+        if (!logs.length) return openModal('运行日志', '<p>暂无日志</p>');
+        openModal('运行日志', `
+            <button class="btn danger small" onclick="clearLogs()" style="margin-bottom:10px;">清空日志</button>
+            <table>
+                <thead><tr><th>文件</th><th>大小</th><th>时间</th><th>操作</th></tr></thead>
+                <tbody>${logs.map(l => `
+                    <tr>
+                        <td>${l.name}</td>
+                        <td>${(Number(l.size || 0) / 1024).toFixed(1)} KB</td>
+                        <td>${formatTime(Number(l.mtime || 0) * 1000)}</td>
+                        <td><button class="btn secondary small" onclick="viewLog('${encodeURIComponent(l.name)}')">查看</button></td>
+                    </tr>`).join('')}</tbody>
+            </table>`);
+        return;
+        if (!logs.length) return openModal('运行日志', '<p>暂无日志</p>');
+        const latest = logs[0];
+        const text = await fetch(`/api/camera/logs/${encodeURIComponent(latest.name)}`).then(r => r.text());
+        const safe = text.slice(-20000).replace(/[&<>]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[s]));
+        openModal(`运行日志：${latest.name}`, `<button class="btn danger small" onclick="clearLogs()" style="margin-bottom:10px;">清空日志</button><pre class="log-box" style="height:60vh;">${safe}</pre>`);
+    } catch (err) {
+        openModal('运行日志', `<p>加载失败：${err.message}</p>`);
+    }
+}
 
-        // ========== 事件绑定 ==========
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.onclick = () => switchPage(btn.dataset.page);
-        });
-        // 视频流按钮绑定
-        streamStartBtn.onclick = startStream;
-        streamStopBtn.onclick = stopStream;
-        snapshotBtn.onclick = takeSnapshot;
-        recordBtn.onclick = toggleRecord;
-        historyQueryBtn.onclick = queryHistory;
+async function viewLog(name) {
+    try {
+        const text = await fetch(`/api/camera/logs/${name}`).then(r => r.text());
+        const safe = text.slice(-20000).replace(/[&<>]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[s]));
+        openModal('运行日志', `<button class="btn secondary small" onclick="loadLogs()" style="margin-bottom:10px;">返回</button><pre class="log-box" style="height:60vh;">${safe}</pre>`);
+    } catch (err) {
+        openModal('运行日志', `<p>加载失败：${err.message}</p>`);
+    }
+}
 
-        // 定时拉取传感器数据
-        function pollStatus() {
-            if (statusBusy) return;
-            statusBusy = true;
-            fetch('/api/status').then(r => r.json()).then(data => {
-                // 渲染传感器数据
-                document.getElementById('val_temp').innerText = data.temp || '--';
-                document.getElementById('val_humi').innerText = data.humi || '--';
-                document.getElementById('val_light').innerText = data.light || '--';
-                const irBox = document.getElementById('val_ir');
-                const irActive = Number(data.ir) === 1;
-                irBox.innerText = irActive ? "有人" : "安全";
-                irBox.style.color = irActive ? "var(--danger)" : "var(--success)";
-                document.getElementById('latest_temp').innerText = data.temp || '--';
-                document.getElementById('latest_humi').innerText = data.humi || '--';
-                document.getElementById('latest_light').innerText = data.light || '--';
-                const latestIr = document.getElementById('latest_ir');
-                latestIr.innerText = irActive ? "有人" : "安全";
-                latestIr.style.color = irActive ? "var(--danger)" : "var(--success)";
+function connectWs() {
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${proto}//${location.host}/ws`);
+    ws.onopen = () => { $('conn_status').textContent = '在线'; log('WebSocket 已连接'); };
+    ws.onmessage = e => {
+        try {
+            const msg = JSON.parse(e.data);
+            if (msg.type !== 'mqtt_msg' || !msg.topic) return;
+            const deviceId = msg.topic.split('/').pop();
+            const payload = JSON.parse(msg.payload);
+            if (payload.data && payload.data.value !== undefined) setSensor(deviceId, payload.data.value);
+        } catch (_) {}
+    };
+    ws.onclose = () => { $('conn_status').textContent = '离线'; setTimeout(connectWs, 3000); };
+    ws.onerror = () => ws.close();
+}
 
-                // 恢复连接状态
-                document.getElementById('conn_status').innerText = "设备在线";
-                document.getElementById('conn_status').style.color = "#fff";
-            }).catch(e => {
-                document.getElementById('conn_status').innerText = "连接断开";
-                document.getElementById('conn_status').style.color = "#ff4d4d";
-                addLog(`传感器数据获取失败: ${e.message}`);
-            }).finally(() => {
-                statusBusy = false;
-            });
-        }
+function bind() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.tab-btn').forEach(x => x.classList.toggle('active', x === btn));
+            document.querySelectorAll('.page').forEach(x => x.classList.toggle('active', x.id === btn.dataset.page));
+            if (btn.dataset.page === 'history') queryHistory();
+        };
+    });
+    $('streamStartBtn').onclick = startStream;
+    $('streamStopBtn').onclick = stopStream;
+    $('snapshotBtn').onclick = takeSnapshot;
+    $('recordBtn').onclick = toggleRecord;
+    $('historyQueryBtn').onclick = queryHistory;
+    $('photosBtn').onclick = loadPhotos;
+    $('videosBtn').onclick = loadVideos;
+    $('logsBtn').onclick = loadLogs;
+    $('modalClose').onclick = () => $('mediaModal').classList.remove('show');
+    $('mediaModal').onclick = e => { if (e.target.id === 'mediaModal') $('mediaModal').classList.remove('show'); };
 
-        pollStatus();
-        setInterval(pollStatus, 1000);
+    function refreshControlUi() {
+        $('dir_f').classList.toggle('active', state.currentDir === 0);
+        $('dir_r').classList.toggle('active', state.currentDir === 1);
+        $('led_sw').parentElement.classList.toggle('active', $('led_sw').checked);
+        $('motor_sw').parentElement.classList.toggle('active', $('motor_sw').checked);
+        $('buzzer_sw').parentElement.classList.toggle('active', $('buzzer_sw').checked);
+    }
 
-        // 初始化日志
-        addLog('[系统] 页面加载完成，设备控制就绪');
-    </script>
+    ['led_sw', 'motor_sw', 'buzzer_sw'].forEach(id => $(id).onchange = () => { refreshControlUi(); sendControl(); });
+    $('led_br').oninput = () => { $('led_text').textContent = `${$('led_br').value}%`; };
+    $('led_br').onchange = sendControl;
+    $('motor_sp').oninput = () => { $('motor_text').textContent = `${$('motor_sp').value}%`; };
+    $('motor_sp').onchange = sendControl;
+    $('dir_f').onclick = () => { state.currentDir = 0; refreshControlUi(); sendControl(); };
+    $('dir_r').onclick = () => { state.currentDir = 1; refreshControlUi(); sendControl(); };
+    refreshControlUi();
+}
 
+bind();
+pollStatus();
+setInterval(pollStatus, 1000);
+connectWs();
+log('页面加载完成');
+</script>
 </body>
-
 </html>

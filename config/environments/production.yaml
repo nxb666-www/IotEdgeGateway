@@ -16,7 +16,7 @@ network:
 mqtt:
   enabled: true
   broker_host: "127.0.0.1"
-  broker_port: 1884
+  broker_port: 1883
   client_id: iotgw-rk3568
   username: ""
   password: ""

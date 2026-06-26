@@ -1,75 +1,111 @@
 #include "websocket_server.hpp"
-// 回调函数：Mongoose 有事件就调这个
-void on_event(mg_connection* c, int ev, void* ev_data) {
-    MongooseServer* server = (MongooseServer*)c->fn_data;
+#include "services/web_services/api/camera_api.hpp"
+
+#include <cstring>
+#include <utility>
+
+// Mongoose event handler (friend of MongooseServer)
+void on_event(struct mg_connection *c, int ev, void *ev_data) {
+    auto *srv = static_cast<MongooseServer *>(c->fn_data);
+    if (!srv && c->mgr) {
+        srv = static_cast<MongooseServer *>(c->mgr->userdata);
+        c->fn_data = srv;
+    }
+    if (!srv) return;
 
     if (ev == MG_EV_HTTP_MSG) {
-        // HTTP 请求来了，调设置的回调
-        mg_http_message* hm = (mg_http_message*)ev_data;
-        bool handled = false;
-        if (server->http_handler_) {
-            handled = server->http_handler_(c, hm);
+        auto *hm = static_cast<mg_http_message *>(ev_data);
+
+        // WebSocket upgrade
+        if (mg_match(hm->uri, mg_str("/ws"), NULL)) {
+            mg_ws_upgrade(c, hm, NULL);
+            return;
         }
-        // 如果 API 没处理（非 /api/* 请求），回退到静态文件服务
-        if (!handled) {
-            struct mg_http_serve_opts opts;
-            memset(&opts, 0, sizeof(opts));
-            opts.root_dir = server->www_root_.c_str();
-            mg_http_serve_dir(c, hm, &opts);
+
+        // Try custom HTTP handler first
+        if (srv->http_handler_ && srv->http_handler_(c, hm)) {
+            return;
         }
-    } else if (ev == MG_EV_WS_MSG) {
-        // WebSocket 消息来了，调设置的回调
-        if (server->ws_handler_) {
-            server->ws_handler_(c, (mg_ws_message*)ev_data);
+
+        // Fallback to static file serving
+        struct mg_http_serve_opts opts = {};
+        opts.root_dir = srv->www_root_.c_str();
+        mg_http_serve_dir(c, hm, &opts);
+        return;
+    }
+
+    if (ev == MG_EV_WS_MSG) {
+        auto *wm = static_cast<mg_ws_message *>(ev_data);
+        if (srv->ws_handler_) {
+            srv->ws_handler_(c, wm);
         }
+        return;
+    }
+
+    // MJPEG: send next frame on every poll tick
+    if (ev == MG_EV_POLL) {
+        if (CameraApi::IsMjpegConnection(c)) {
+            CameraApi::HandleMjpegPoll(c);
+        }
+        return;
     }
 }
 
 MongooseServer::MongooseServer()
-:running_(false), listener_(nullptr)
-{
+    : running_(false), listener_(nullptr) {
     mg_mgr_init(&mgr_);
+    mgr_.userdata = this;
 }
-MongooseServer::~MongooseServer(){
+
+MongooseServer::~MongooseServer() {
     Stop();
 }
-// 启动服务器，监听地址
-bool MongooseServer::Start(const std::string& addr){
-    listener_ = mg_http_listen(&mgr_,addr.c_str(),on_event,this);
-    if (listener_ == nullptr) {
-        running_ = false;
+
+bool MongooseServer::Start(const std::string &addr) {
+    mgr_.userdata = this;
+
+    listener_ = mg_http_listen(&mgr_, addr.c_str(), on_event, this);
+    if (!listener_) {
         return false;
     }
+
+    // Point every connection's fn_data back to this server so on_event can find it
+    listener_->fn_data = this;
     running_ = true;
     return true;
-}  
-// 轮询事件
-void MongooseServer::Poll(int timeout_ms){
-     mg_mgr_poll(&mgr_, timeout_ms);
-}             
-// 停止服务器
-void MongooseServer::Stop(){
-    if (!running_ && listener_ == nullptr) return;
-    running_ = false;
-    listener_ = nullptr;
-    mg_mgr_free(&mgr_);
-}            
-// 设置 HTTP 回调
-void MongooseServer::SetHttpHandler(HttpHandler handler){
-    http_handler_ = handler;
-}   
-// 设置 WebSocket 回调
-void MongooseServer::SetWsHandler(WsHandler handler){
-    ws_handler_ = handler;
-}   
-// 设置静态文件目录   
-void MongooseServer::SetWwwRoot(const std::string& path){
+}
+
+void MongooseServer::Poll(int timeout_ms) {
+    mg_mgr_poll(&mgr_, timeout_ms);
+    // mg_mgr_poll may create new connections; ensure fn_data is set
+    for (struct mg_connection *nc = mgr_.conns; nc != NULL; nc = nc->next) {
+        if (nc->fn_data == nullptr) {
+            nc->fn_data = this;
+        }
+    }
+}
+
+void MongooseServer::Stop() {
+    if (running_) {
+        mg_mgr_free(&mgr_);
+        running_ = false;
+    }
+}
+
+void MongooseServer::SetHttpHandler(HttpHandler handler) {
+    http_handler_ = std::move(handler);
+}
+
+void MongooseServer::SetWsHandler(WsHandler handler) {
+    ws_handler_ = std::move(handler);
+}
+
+void MongooseServer::SetWwwRoot(const std::string &path) {
     www_root_ = path;
-}  
-// WebSocket 广播：给所有连接发消息
-void MongooseServer::BroadcastText(const std::string& msg) {
-    struct mg_connection* c;
-    for (c = mgr_.conns; c != NULL; c = c->next) {
+}
+
+void MongooseServer::BroadcastText(const std::string &msg) {
+    for (struct mg_connection *c = mgr_.conns; c != NULL; c = c->next) {
         if (c->is_websocket) {
             mg_ws_send(c, msg.c_str(), msg.size(), WEBSOCKET_OP_TEXT);
         }

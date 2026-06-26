@@ -17,7 +17,7 @@ public:
         std::string client_id;
         std::string user;
         std::string pass;
-        uint16_t keepalive_sec = 30;
+        uint16_t keepalive_sec = 0;
         bool clean_session = true;
         uint8_t version = 4;
     };

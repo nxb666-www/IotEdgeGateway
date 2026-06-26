@@ -65,6 +65,7 @@ add_library(iotgw_common STATIC
     src/core/common/config/config_manager.cpp
     src/core/device/manager/device_registry.cpp
     src/core/device/protocol_adapters/mqtt_adapter/mqtt_client.cpp
+    src/core/device/protocol_adapters/zigbee_adapter/zigbee_adapter.cpp
     src/core/storage/sqlite_storage.cpp
     src/services/web_services/api/device_api.cpp
     src/services/web_services/api/rest_api.cpp

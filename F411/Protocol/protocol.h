@@ -4,8 +4,6 @@
 #include "stm32f4xx.h"
 
 void Protocol_ParseAndExecute(char *json_str);
-void Protocol_UploadAHT30(void);
-void Protocol_UploadLightSensor(void);
-void Protocol_UploadInfrared(void);
+void Protocol_UploadSensors(void);
 
 #endif

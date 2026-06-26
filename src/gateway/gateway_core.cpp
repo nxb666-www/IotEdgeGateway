@@ -15,6 +15,7 @@
 
 #include "gateway_core.hpp"
 #include "core/common/config/config_manager.hpp"
+#include "core/common/utils/json_utils.hpp"
 #include "core/common/logger/logger.hpp"
 #include "core/device/manager/device_manager.hpp"
 #include "core/device/protocol_adapters/mqtt_adapter/mqtt_adapter.hpp"
@@ -229,21 +230,27 @@ int GatewayCore::Run(int argc, char* argv[]) {
     RuleApi::SetRuleEngine(&rule_engine);
     LoadRulesFromFile("config/rules/automation-rules.yaml", "automation", rule_engine, logger);
     LoadRulesFromFile("config/rules/alarm-rules.yaml", "alarm", rule_engine, logger);
+    // 手动控制优先级：记录每个执行器的手动控制截止时间
     std::unordered_map<std::string, int64_t> manual_control_until_ms;
     int64_t manual_override_ms = 30000;
     cfg.GetInt64("control.manual_override_ms", manual_override_ms);
+    // 规则引擎去重：记录每个执行器上次发布的命令，避免重复发送淹没串口
+    std::unordered_map<std::string, std::string> last_rule_cmd;
     RestApi::SetManualControlCallback([&](const std::string& payload) {
         int64_t until = NowMs() + manual_override_ms;
         if (JsonHasField(payload, "led_on")) {
             manual_control_until_ms["led"] = until;
+            last_rule_cmd.erase("led");
             logger->Info("manual control priority: led");
         }
         if (JsonHasField(payload, "motor_on")) {
             manual_control_until_ms["motor"] = until;
+            last_rule_cmd.erase("motor");
             logger->Info("manual control priority: motor");
         }
         if (JsonHasField(payload, "buzzer")) {
             manual_control_until_ms["buzzer"] = until;
+            last_rule_cmd.erase("buzzer");
             logger->Info("manual control priority: buzzer");
         }
     });
@@ -286,8 +293,14 @@ int GatewayCore::Run(int argc, char* argv[]) {
         int64_t broker_port = 1883;
         cfg.GetInt64("mqtt.broker_port", broker_port);
         std::string client_id = cfg.GetStringOr("mqtt.client_id", "iotgw-dev");
+        int64_t keepalive_sec = mqtt_options.keepalive_sec;
+        cfg.GetInt64("mqtt.keepalive_sec", keepalive_sec);
+        bool clean_session = mqtt_options.clean_session;
+        cfg.GetBool("mqtt.clean_session", clean_session);
         mqtt_options.url = "mqtt://" + broker_host + ":" + std::to_string(broker_port);
         mqtt_options.client_id = client_id;
+        mqtt_options.keepalive_sec = static_cast<uint16_t>(keepalive_sec <= 0 ? 30 : keepalive_sec);
+        mqtt_options.clean_session = clean_session;
         mqtt_telemetry_topic = topic_prefix + "telemetry/#";
 
         mqtt_client = std::make_shared<MqttClient>(server.GetMgr(), logger);
@@ -355,27 +368,26 @@ int GatewayCore::Run(int argc, char* argv[]) {
                     rule_engine.OnSensorValue(device_id, sensor_value,
                         [&](const Rule& rule, const Action& action) {
                             if (action.type == "actuator_set") {
-                                // 动作类型：控制执行器
-                                // 从注册表查执行器的命令主题
-                                // 发布 MQTT 到 iotgw/dev/cmd/{actuator_id}
-                                // → ESP32 订阅命令主题后接收
-                                // → ConvertToStm32Control() 转 STM32 格式
-                                // → serial.Write() 写入串口
-                                // → STM32 Protocol_ParseAndExecute() 执行
                                 std::string cmd_topic;
                                 if (registry.GetCommandTopic(action.actuator_id, cmd_topic)) {
+                                    // 手动控制优先：在手动覆盖窗口内跳过规则
                                     auto manual_it = manual_control_until_ms.find(action.actuator_id);
                                     if (manual_it != manual_control_until_ms.end() && NowMs() < manual_it->second) {
-                                        logger->Info("rule skipped by manual priority: "
+                                        logger->Debug("rule skipped by manual priority: "
                                             + rule.id + " -> " + action.actuator_id);
                                         return;
                                     }
+                                    // 命令去重：和上次发布的命令相同则跳过，避免淹没串口
+                                    auto last_it = last_rule_cmd.find(action.actuator_id);
+                                    if (last_it != last_rule_cmd.end() && last_it->second == action.value) {
+                                        return;
+                                    }
+                                    last_rule_cmd[action.actuator_id] = action.value;
                                     mqtt_client->Publish(cmd_topic, action.value);
                                     logger->Info("规则触发: " + rule.id
                                         + " → " + action.actuator_id + "=" + action.value);
                                 }
                             } else if (action.type == "log") {
-                                // 动作类型：写日志告警
                                 if (action.level == "warn") {
                                     logger->Warn("告警规则 " + rule.id + ": " + action.message);
                                 } else {
@@ -389,8 +401,8 @@ int GatewayCore::Run(int argc, char* argv[]) {
                 // 把 MQTT 消息转发给所有连接的浏览器
                 // 浏览器收到后更新传感器仪表盘
                 std::string frame = "{\"type\":\"mqtt_msg\""
-                    ",\"topic\":\"" + topic + "\""
-                    ",\"payload\":\"" + payload + "\"}";
+                    ",\"topic\":" + json_utils::Quote(topic) +
+                    ",\"payload\":" + json_utils::Quote(payload) + "}";
                 server.BroadcastText(frame);
             }
         );

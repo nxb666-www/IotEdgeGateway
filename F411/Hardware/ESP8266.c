@@ -7,6 +7,7 @@
 #define ESP8266_WAIT_STEP_MS 10
 
 static uint8_t s_mqtt_ready = 0;
+static uint8_t s_publish_fail_count = 0;
 static char s_pending_payload[220];
 static uint8_t s_has_pending_payload = 0;
 
@@ -105,6 +106,7 @@ uint8_t ESP8266_Init(void)
     char cmd[140];
 
     s_mqtt_ready = 0;
+    s_publish_fail_count = 0;
     Delay_ms(1000);
 
     ESP8266_SendCmd("AT", "OK", 1000);
@@ -137,6 +139,7 @@ uint8_t ESP8266_Init(void)
     }
 
     s_mqtt_ready = 1;
+    s_publish_fail_count = 0;
     return 1;
 }
 
@@ -155,23 +158,32 @@ uint8_t ESP8266_Publish(const char *topic, const char *payload)
     }
 
     sprintf(cmd, "AT+MQTTPUBRAW=0,\"%s\",%u,0,0", topic, (unsigned int)strlen(payload));
-    if (!ESP8266_SendCmd(cmd, ">", 3000))
+    if (!ESP8266_SendCmd(cmd, ">", 1200))
     {
-        s_mqtt_ready = 0;
-        ESP8266_SendCmd("AT+MQTTCLEAN=0", "OK", 1000);
+        if (++s_publish_fail_count >= 3)
+        {
+            s_mqtt_ready = 0;
+            s_publish_fail_count = 0;
+            ESP8266_SendCmd("AT+MQTTCLEAN=0", "OK", 1000);
+        }
         return 0;
     }
 
     ESP8266_ClearRx();
     Send_Arr((uint8_t *)payload, (uint16_t)strlen(payload));
-    if (!ESP8266_WaitFor("OK", 5000))
+    if (!ESP8266_WaitFor("OK", 1800))
     {
-        s_mqtt_ready = 0;
-        ESP8266_SendCmd("AT+MQTTCLEAN=0", "OK", 1000);
+        if (++s_publish_fail_count >= 3)
+        {
+            s_mqtt_ready = 0;
+            s_publish_fail_count = 0;
+            ESP8266_SendCmd("AT+MQTTCLEAN=0", "OK", 1000);
+        }
         return 0;
     }
 
-    Delay_ms(120);
+    s_publish_fail_count = 0;
+    Delay_ms(30);
     return 1;
 }
 

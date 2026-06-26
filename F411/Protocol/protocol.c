@@ -6,7 +6,6 @@
 #include "LightSensor.h"
 #include "Infrared.h"
 #include "USART1_Model.h"
-#include "ESP8266.h"
 #include "PWM.h"
 #include <string.h>
 #include <stdio.h>
@@ -118,13 +117,17 @@ void Protocol_ParseAndExecute(char *json_str)
 }
 
 
-void Protocol_UploadAHT30(void)
+void Protocol_UploadSensors(void)
 {
-    char payload[180];
+    char payload[96];
     float temp = 0.0f;
     float humi = 0.0f;
+    uint8_t light;
+    uint8_t ir;
 
     AHT30_ReadData(&temp, &humi);
+    light = LightSensor_Read();
+    ir = Infrared_Read();
 
     int temp_int = (int)temp;
     int temp_deci = (int)((temp - temp_int) * 10);
@@ -135,42 +138,10 @@ void Protocol_UploadAHT30(void)
     if (humi_deci < 0) humi_deci = -humi_deci;
 
     sprintf(payload,
-        "{\"device_id\":\"temp\",\"type\":\"sensor\",\"source\":\"stm32\","
-        "\"driver\":\"aht30\",\"data\":{\"value\":%d.%d},\"ts\":0}",
-        temp_int, temp_deci);
-    ESP8266_Publish("iotgw/dev/telemetry/temp", payload);
-
-    sprintf(payload,
-        "{\"device_id\":\"humi\",\"type\":\"sensor\",\"source\":\"stm32\","
-        "\"driver\":\"aht30\",\"data\":{\"value\":%d.%d},\"ts\":0}",
-        humi_int, humi_deci);
-    ESP8266_Publish("iotgw/dev/telemetry/humi", payload);
-}
-
-void Protocol_UploadLightSensor(void)
-{
-    char payload[150];
-
-    uint8_t light = LightSensor_Read();
-
-    sprintf(payload,
-        "{\"device_id\":\"light\",\"type\":\"sensor\",\"source\":\"stm32\","
-        "\"driver\":\"lightsensor\",\"data\":{\"value\":%u},\"ts\":0}",
-        (unsigned int)light);
-
-    ESP8266_Publish("iotgw/dev/telemetry/light", payload);
-}
-
-void Protocol_UploadInfrared(void)
-{
-    char payload[150];
-
-    uint8_t ir = Infrared_Read();
-
-    sprintf(payload,
-        "{\"device_id\":\"ir\",\"type\":\"sensor\",\"source\":\"stm32\","
-        "\"driver\":\"infrared\",\"data\":{\"value\":%u},\"ts\":0}",
-        (unsigned int)ir);
-
-    ESP8266_Publish("iotgw/dev/telemetry/ir", payload);
+            "{\"temp\":%d.%d,\"humi\":%d.%d,\"light\":%u,\"ir\":%u}\n",
+            temp_int, temp_deci,
+            humi_int, humi_deci,
+            (unsigned int)light,
+            (unsigned int)ir);
+    Send_Str((uint8_t *)payload);
 }

@@ -6,7 +6,7 @@
 #define ESP8266_WIFI_SSID      "nie"
 #define ESP8266_WIFI_PASSWORD  "12345678"
 #define ESP8266_MQTT_HOST      "192.168.233.107"
-#define ESP8266_MQTT_PORT      1884
+#define ESP8266_MQTT_PORT      1883
 
 uint8_t ESP8266_Init(void);
 uint8_t ESP8266_IsReady(void);

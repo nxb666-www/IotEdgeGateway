@@ -3,22 +3,21 @@
 
 #include <QByteArray>
 #include <QNetworkAccessManager>
-#include <QSerialPort>
+#include <QString>
 #include <QTimer>
-#include <QVector>
 #include <QWidget>
 
 class QCheckBox;
 class QComboBox;
 class QLabel;
 class QLineEdit;
+class QNetworkReply;
 class QPushButton;
 class QSlider;
 class QStackedWidget;
 class QTableWidget;
 class QTabBar;
 class QTextEdit;
-class TrendChart;
 
 class MainWidget : public QWidget
 {
@@ -34,34 +33,40 @@ private slots:
     void queryHistory();
     void startStream();
     void stopStream();
-    void refreshFrame();
     void takeSnapshot();
     void toggleRecord();
-    void openSerial();
-    void closeSerial();
-    void readSerialData();
+    void loadPhotos();
+    void loadVideos();
+    void loadLogs();
+    void clearRemoteLogs();
+    void openHistoryItem(int row, int column);
+    // TODO: Zigbee 串口接口，RK3568 烧写工具就绪后启用
+    // void openSerial();
+    // void closeSerial();
 
 private:
     QWidget *buildMainPage();
     QWidget *buildHistoryPage();
     QWidget *card(const QString &title, QWidget *body);
-    QWidget *sensorCard(const QString &name, const QString &unit, const QString &color, QLabel **valueLabel);
-    QWidget *latestCard(const QString &name, const QString &unit, QLabel **valueLabel);
     QPushButton *button(const QString &text, const QString &type = "secondary");
+    QWidget *metricCard(const QString &title, const QString &unit, QLabel **value);
     void loadConfig();
     void applyStyle();
     void appendLog(const QString &message);
-    void updateAlarm(double temp, double humi, int light, int ir);
     void setOnline(bool online);
-    void refreshSerialPorts();
+    void updateMetrics(const QJsonObject &obj);
+    void setHistoryHeaders(const QStringList &headers);
+    void startMjpegStream(const QUrl &url);
+    void consumeMjpegData();
+    void fillMediaTable(const QJsonArray &items, const QString &basePath, bool megabytes);
 
     QNetworkAccessManager *net_ = nullptr;
-    QSerialPort *serial_ = nullptr;
-    QByteArray serialBuffer_;
-    QString apiBase_;
-
     QTimer *statusTimer_ = nullptr;
-    QTimer *videoTimer_ = nullptr;
+    QNetworkReply *mjpegReply_ = nullptr;
+    QByteArray mjpegBuffer_;
+
+    QString apiBase_;
+    QString historyMode_ = "telemetry";
     bool streaming_ = false;
     bool recording_ = false;
     int motorDir_ = 0;
@@ -75,12 +80,6 @@ private:
     QLabel *humiValue_ = nullptr;
     QLabel *lightValue_ = nullptr;
     QLabel *irValue_ = nullptr;
-    QLabel *latestTemp_ = nullptr;
-    QLabel *latestHumi_ = nullptr;
-    QLabel *latestLight_ = nullptr;
-    QLabel *latestIr_ = nullptr;
-    QTextEdit *alarmText_ = nullptr;
-
     QLabel *videoLabel_ = nullptr;
     QPushButton *streamStartBtn_ = nullptr;
     QPushButton *streamStopBtn_ = nullptr;
@@ -88,10 +87,10 @@ private:
 
     QCheckBox *ledCheck_ = nullptr;
     QSlider *ledSlider_ = nullptr;
-    QLabel *ledLabel_ = nullptr;
+    QLabel *ledText_ = nullptr;
     QCheckBox *motorCheck_ = nullptr;
     QSlider *motorSlider_ = nullptr;
-    QLabel *motorLabel_ = nullptr;
+    QLabel *motorText_ = nullptr;
     QPushButton *dirForwardBtn_ = nullptr;
     QPushButton *dirReverseBtn_ = nullptr;
     QCheckBox *buzzerCheck_ = nullptr;
@@ -99,11 +98,9 @@ private:
     QComboBox *historyDevice_ = nullptr;
     QComboBox *historyLimit_ = nullptr;
     QTableWidget *historyTable_ = nullptr;
-    TrendChart *trendChart_ = nullptr;
-
-    QComboBox *serialPortBox_ = nullptr;
-    QTextEdit *serialText_ = nullptr;
     QTextEdit *logText_ = nullptr;
+    // TODO: Zigbee 串口显示区，启用时取消注释
+    // QTextEdit *serialText_ = nullptr;
 };
 
 #endif

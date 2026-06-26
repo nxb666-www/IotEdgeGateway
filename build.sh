@@ -50,18 +50,23 @@ if [ "$TARGET" = "native" ]; then
         -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
 else
     BUILD_DIR="$ROOT_DIR/build/aarch64/$(printf "%s" "$BUILD_TYPE" | tr 'A-Z' 'a-z')"
+    CMAKE_EXTRA_ARGS=""
+    if [ -d "$ROOT_DIR/build/_deps/mongoose-src" ]; then
+        CMAKE_EXTRA_ARGS="$CMAKE_EXTRA_ARGS -DFETCHCONTENT_SOURCE_DIR_MONGOOSE=$ROOT_DIR/build/_deps/mongoose-src"
+    fi
+    if [ -d "$ROOT_DIR/build/_deps/rapidyaml-src" ]; then
+        CMAKE_EXTRA_ARGS="$CMAKE_EXTRA_ARGS -DFETCHCONTENT_SOURCE_DIR_RAPIDYAML=$ROOT_DIR/build/_deps/rapidyaml-src"
+    fi
     cmake -S "$ROOT_DIR" -B "$BUILD_DIR" -G Ninja \
         -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
         -DCMAKE_TOOLCHAIN_FILE="$ROOT_DIR/cmake/toolchain-aarch64.cmake" \
-        -DFETCHCONTENT_SOURCE_DIR_MONGOOSE="$ROOT_DIR/build/_deps/mongoose-src" \
-        -DFETCHCONTENT_SOURCE_DIR_RAPIDYAML="$ROOT_DIR/build/_deps/rapidyaml-src"
+        $CMAKE_EXTRA_ARGS
 fi
 
 cmake --build "$BUILD_DIR"
 
 if [ "$BUILD_TYPE" = "Release" ] && command -v strip >/dev/null 2>&1; then
     strip "$BUILD_DIR/iotgw_gateway" 2>/dev/null || true
-    strip "$BUILD_DIR/iotgw_mqtt_broker" 2>/dev/null || true
 fi
 
 echo "Build done: $BUILD_DIR"

@@ -1,17 +1,14 @@
-# 告警规则：传感器满足条件 → 写日志报警
-# 比如：温度过高 → 日志里写一条警告
-
 alarm_rules:
-  - id: high_temp               # 规则 ID
-    enabled: true               # 是否启用
-    when:                       # 条件
-      sensor_id: temp           # 哪个传感器
-      op: ">"                   # 运算符
-      value: 60                 # 阈值
-    then:                       # 动作
-      - type: log               # 写日志
-        level: warn             # 日志级别
-        message: "温度过高！"    # 日志内容
+  - id: high_temp
+    enabled: true
+    when:
+      sensor_id: temp
+      op: ">"
+      value: 60
+    then:
+      - type: log
+        level: warn
+        message: "temperature high"
 
   - id: high_humi
     enabled: true
@@ -22,4 +19,4 @@ alarm_rules:
     then:
       - type: log
         level: warn
-        message: "湿度过高！"
+        message: "humidity high"

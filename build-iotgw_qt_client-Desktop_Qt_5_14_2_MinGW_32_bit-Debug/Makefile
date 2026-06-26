@@ -231,6 +231,7 @@ Makefile: ../qt_client/iotgw_qt_client.pro D:/development_tool/Qt5.14.2/5.14.2/m
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/qt_config.prf \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/win32-g++/qmake.conf \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/exclusive_builds.prf \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/toolchain.prf \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/default_pre.prf \
@@ -258,10 +259,8 @@ Makefile: ../qt_client/iotgw_qt_client.pro D:/development_tool/Qt5.14.2/5.14.2/m
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5Widgets.prl \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5Gui.prl \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5Network.prl \
-		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5SerialPort.prl \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5Core.prl \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/qtmain.prl \
-		.qmake.stash \
 		D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/build_pass.prf
 	$(QMAKE) -o Makefile ..\qt_client\iotgw_qt_client.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/spec_pre.prf:
@@ -425,6 +424,7 @@ D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/qt_functions.prf
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/qt_config.prf:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/win32-g++/qmake.conf:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/spec_post.prf:
+.qmake.stash:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/exclusive_builds.prf:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/toolchain.prf:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/default_pre.prf:
@@ -452,10 +452,8 @@ D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/lex.prf:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5Widgets.prl:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5Gui.prl:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5Network.prl:
-D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5SerialPort.prl:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/Qt5Core.prl:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/lib/qtmain.prl:
-.qmake.stash:
 D:/development_tool/Qt5.14.2/5.14.2/mingw73_32/mkspecs/features/build_pass.prf:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ..\qt_client\iotgw_qt_client.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
