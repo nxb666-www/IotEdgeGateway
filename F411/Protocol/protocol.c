@@ -6,6 +6,7 @@
 #include "LightSensor.h"
 #include "Infrared.h"
 #include "USART1_Model.h"
+#include "Zigbee.h"
 #include "PWM.h"
 #include <string.h>
 #include <stdio.h>
@@ -144,4 +145,45 @@ void Protocol_UploadSensors(void)
             (unsigned int)light,
             (unsigned int)ir);
     Send_Str((uint8_t *)payload);
+}
+
+static void Zigbee_SendSensorValue(const char *id, const char *driver, float value)
+{
+    char payload[128];
+    int int_part = (int)value;
+    int deci_part = (int)((value - int_part) * 10);
+
+    if (deci_part < 0) deci_part = -deci_part;
+
+    sprintf(payload,
+            "{\"device_id\":\"%s\",\"type\":\"sensor\",\"source\":\"stm32\",\"driver\":\"%s\",\"data\":{\"value\":%d.%d},\"ts\":0}\n",
+            id, driver, int_part, deci_part);
+    Zigbee_SendString(payload);
+}
+
+static void Zigbee_SendSensorInt(const char *id, const char *driver, uint8_t value)
+{
+    char payload[128];
+
+    sprintf(payload,
+            "{\"device_id\":\"%s\",\"type\":\"sensor\",\"source\":\"stm32\",\"driver\":\"%s\",\"data\":{\"value\":%u},\"ts\":0}\n",
+            id, driver, (unsigned int)value);
+    Zigbee_SendString(payload);
+}
+
+void Protocol_UploadSensorsZigbee(void)
+{
+    float temp = 0.0f;
+    float humi = 0.0f;
+    uint8_t light;
+    uint8_t ir;
+
+    AHT30_ReadData(&temp, &humi);
+    light = LightSensor_Read();
+    ir = Infrared_Read();
+
+    Zigbee_SendSensorValue("temp", "aht30", temp);
+    Zigbee_SendSensorValue("humi", "aht30", humi);
+    Zigbee_SendSensorInt("light", "lightsensor", light);
+    Zigbee_SendSensorInt("ir", "infrared", ir);
 }

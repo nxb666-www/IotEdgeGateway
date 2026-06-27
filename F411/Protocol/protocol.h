@@ -5,5 +5,6 @@
 
 void Protocol_ParseAndExecute(char *json_str);
 void Protocol_UploadSensors(void);
+void Protocol_UploadSensorsZigbee(void);
 
 #endif

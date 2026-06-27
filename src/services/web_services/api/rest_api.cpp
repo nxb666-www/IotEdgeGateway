@@ -1,6 +1,7 @@
 #include "rest_api.hpp"
 
 #include "core/storage/sqlite_storage.hpp"
+#include "core/device/protocol_adapters/zigbee_adapter/zigbee_adapter.hpp"
 
 #include <cstdlib>
 #include <utility>
@@ -8,7 +9,9 @@
 DeviceRegistry* RestApi::registry_ = nullptr;
 MqttClient* RestApi::mqtt_client_ = nullptr;
 SqliteStorage* RestApi::sqlite_ = nullptr;
+ZigbeeAdapter* RestApi::zigbee_adapter_ = nullptr;
 std::function<void(const std::string&)> RestApi::manual_control_callback_;
+static std::string g_active_transport = "mqtt";
 
 void RestApi::SetRegistry(DeviceRegistry* r) {
     registry_ = r;
@@ -20,6 +23,10 @@ void RestApi::SetMqttClient(MqttClient* client) {
 
 void RestApi::SetSqliteStorage(SqliteStorage* db) {
     sqlite_ = db;
+}
+
+void RestApi::SetZigbeeAdapter(ZigbeeAdapter* adapter) {
+    zigbee_adapter_ = adapter;
 }
 
 void RestApi::SetManualControlCallback(std::function<void(const std::string&)> cb) {
@@ -115,12 +122,6 @@ void RestApi::HandleStatus(mg_connection* c) {
 }
 
 void RestApi::HandleControl(mg_connection* c, mg_http_message* msg) {
-    if (!mqtt_client_ || !mqtt_client_->IsOpen()) {
-        mg_http_reply(c, 503, "Content-Type: application/json\r\n",
-            "{\"ok\":false,\"error\":\"mqtt_not_connected\",\"stage\":\"gateway\"}\n");
-        return;
-    }
-
     std::string body(msg->body.buf, msg->body.len);
     std::string payload_str = body;
 
@@ -142,24 +143,40 @@ void RestApi::HandleControl(mg_connection* c, mg_http_message* msg) {
         }
     }
 
-    // 先记录手动控制优先级，再发布 MQTT
+    // 先记录手动控制优先级
     if (manual_control_callback_) {
         manual_control_callback_(payload_str);
     }
 
-    std::string p = "{\"type\":\"control\",\"payload\":" + payload_str + "}";
-    bool published = mqtt_client_->Publish("iotgw/dev/cmd/control", p);
-    if (published) {
-        mqtt_client_->Publish("iotgw/dev/cmd/control", p);
-    }
+    // 根据当前传输方式选择通道
+    if (g_active_transport == "zigbee" && zigbee_adapter_ && zigbee_adapter_->IsConnected()) {
+        std::string p = "{\"type\":\"control\",\"payload\":" + payload_str + "}";
+        bool sent = zigbee_adapter_->SendCommand("control", p);
+        if (sent) {
+            mg_http_reply(c, 200, "Content-Type: application/json\r\n",
+                "{\"ok\":true,\"stage\":\"zigbee_sent\",\"payload\":%s}\n", p.c_str());
+        } else {
+            mg_http_reply(c, 500, "Content-Type: application/json\r\n",
+                "{\"ok\":false,\"error\":\"zigbee_send_failed\",\"stage\":\"zigbee\"}\n");
+        }
+    } else if (mqtt_client_ && mqtt_client_->IsOpen()) {
+        std::string p = "{\"type\":\"control\",\"payload\":" + payload_str + "}";
+        bool published = mqtt_client_->Publish("iotgw/dev/cmd/control", p);
+        if (published) {
+            mqtt_client_->Publish("iotgw/dev/cmd/control", p);
+        }
 
-    if (published) {
-        mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-            "{\"ok\":true,\"stage\":\"mqtt_published\",\"topic\":\"iotgw/dev/cmd/control\",\"repeat\":2,\"payload\":%s}\n",
-            p.c_str());
+        if (published) {
+            mg_http_reply(c, 200, "Content-Type: application/json\r\n",
+                "{\"ok\":true,\"stage\":\"mqtt_published\",\"topic\":\"iotgw/dev/cmd/control\",\"repeat\":2,\"payload\":%s}\n",
+                p.c_str());
+        } else {
+            mg_http_reply(c, 500, "Content-Type: application/json\r\n",
+                "{\"ok\":false,\"error\":\"mqtt_publish_failed\",\"stage\":\"mqtt\"}\n");
+        }
     } else {
-        mg_http_reply(c, 500, "Content-Type: application/json\r\n",
-            "{\"ok\":false,\"error\":\"mqtt_publish_failed\",\"stage\":\"mqtt\"}\n");
+        mg_http_reply(c, 503, "Content-Type: application/json\r\n",
+            "{\"ok\":false,\"error\":\"no_transport_connected\",\"stage\":\"gateway\"}\n");
     }
 }
 
@@ -197,8 +214,6 @@ void RestApi::HandleHistory(mg_connection* c, mg_http_message* msg) {
 }
 
 // GET/POST /api/transport — 通信方式查询/切换
-// 当前只有 MQTT 实际可用，Zigbee 为占位
-static std::string g_active_transport = "mqtt";
 
 void RestApi::HandleTransport(mg_connection* c, mg_http_message* msg) {
     if (mg_match(msg->method, mg_str("POST"), NULL)) {
@@ -212,17 +227,24 @@ void RestApi::HandleTransport(mg_connection* c, mg_http_message* msg) {
                 size_t end = body.find('"', start);
                 std::string val = body.substr(start, end - start);
                 if (val == "zigbee") {
-                    // Zigbee 当前为占位，不允许切换
-                    mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-                        "{\"active\":\"mqtt\",\"available\":[\"mqtt\"],\"error\":\"zigbee_not_available\"}\n");
-                    return;
+                    if (zigbee_adapter_ && zigbee_adapter_->IsConnected()) {
+                        g_active_transport = "zigbee";
+                    } else {
+                        mg_http_reply(c, 200, "Content-Type: application/json\r\n",
+                            "{\"active\":\"mqtt\",\"error\":\"zigbee_not_connected\"}\n");
+                        return;
+                    }
+                } else if (val == "mqtt") {
+                    g_active_transport = "mqtt";
                 }
-                g_active_transport = "mqtt";
             }
         }
     }
     // GET 或切换后返回当前状态
+    bool zigbee_ready = zigbee_adapter_ && zigbee_adapter_->IsConnected();
     mg_http_reply(c, 200, "Content-Type: application/json\r\n",
-        "{\"active\":\"%s\",\"available\":[\"mqtt\"],\"zigbee\":\"not_connected\"}\n",
-        g_active_transport.c_str());
+        "{\"active\":\"%s\",\"available\":[\"mqtt\"%s],\"zigbee\":{\"ready\":%s}}\n",
+        g_active_transport.c_str(),
+        zigbee_ready ? ",\"zigbee\"" : "",
+        zigbee_ready ? "true" : "false");
 }

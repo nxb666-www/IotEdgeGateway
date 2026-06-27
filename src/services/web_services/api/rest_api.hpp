@@ -13,17 +13,21 @@
 
 class SqliteStorage;
 
+class ZigbeeAdapter;
+
 class RestApi {
 private:
     static DeviceRegistry* registry_;
     static MqttClient* mqtt_client_;
     static SqliteStorage* sqlite_;
+    static ZigbeeAdapter* zigbee_adapter_;
     static std::function<void(const std::string&)> manual_control_callback_;
 
 public:
     static void SetRegistry(DeviceRegistry* r);
     static void SetMqttClient(MqttClient* client);
     static void SetSqliteStorage(SqliteStorage* db);
+    static void SetZigbeeAdapter(ZigbeeAdapter* adapter);
     static void SetManualControlCallback(std::function<void(const std::string&)> cb);
 
     static bool HandleRequest(mg_connection* c, mg_http_message* msg);

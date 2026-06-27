@@ -207,7 +207,7 @@
     <header class="topbar">
         <div class="brand">RK3568 智能网关<small>Web 控制中心</small></div>
         <div class="status-row">
-            <div class="badge" id="transport_status" title="当前通信方式">MQTT</div>
+            <div class="badge" id="transport_status" title="点击切换通信方式" style="cursor:pointer" onclick="toggleTransport()">MQTT</div>
             <div class="badge" id="conn_status">连接中</div>
         </div>
     </header>
@@ -396,6 +396,19 @@ function setSensor(id, value) {
     $('sensor_update_time').textContent = `更新 ${new Date().toLocaleTimeString()}`;
 }
 
+function updateSensorFromPayload(payload) {
+    try {
+        const data = typeof payload === 'string' ? JSON.parse(payload) : payload;
+        if (data.data) {
+            if (data.data.temp !== undefined) setSensor('temp', data.data.temp);
+            if (data.data.humi !== undefined) setSensor('humi', data.data.humi);
+            if (data.data.light !== undefined) setSensor('light', data.data.light);
+            if (data.data.ir !== undefined) setSensor('ir', data.data.ir);
+            if (data.data.value !== undefined && data.device_id) setSensor(data.device_id, data.data.value);
+        }
+    } catch (_) {}
+}
+
 async function pollStatus() {
     if (state.statusBusy) return;
     state.statusBusy = true;
@@ -435,12 +448,29 @@ async function sendControl() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         }, 3000);
-        log(`控制已发布到 MQTT：${res.topic || 'iotgw/dev/cmd/control'}，重复 ${res.repeat || 1} 次`);
+        const transport = res.stage === 'zigbee_sent' ? 'Zigbee' : 'MQTT';
+        log(`控制已发布到 ${transport}：${res.topic || res.payload || ''}`);
     } catch (err) {
         log(`控制失败：${err.message}`);
     } finally {
         state.controlBusy = false;
         if (state.controlPending) setTimeout(sendControl, 120);
+    }
+}
+
+async function toggleTransport() {
+    try {
+        const res = await getJson('/api/transport');
+        const next = res.active === 'mqtt' ? 'zigbee' : 'mqtt';
+        const update = await getJson('/api/transport', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ transport: next })
+        });
+        $('transport_status').textContent = update.active.toUpperCase();
+        log(`通信方式已切换：${update.active.toUpperCase()}`);
+    } catch (err) {
+        log(`切换失败：${err.message}`);
     }
 }
 
@@ -632,7 +662,11 @@ function connectWs() {
     ws.onmessage = e => {
         try {
             const msg = JSON.parse(e.data);
-            if (msg.type !== 'mqtt_msg' || !msg.topic) return;
+            if (msg.type === 'zigbee_msg') {
+            updateSensorFromPayload(msg.payload);
+            return;
+        }
+        if (msg.type !== 'mqtt_msg' || !msg.topic) return;
             const deviceId = msg.topic.split('/').pop();
             const payload = JSON.parse(msg.payload);
             if (payload.data && payload.data.value !== undefined) setSensor(deviceId, payload.data.value);

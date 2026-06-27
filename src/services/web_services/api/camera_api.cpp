@@ -28,6 +28,8 @@ const char* kStreamPath = "/stream.mjpg";
 const char* kLocalStreamUrl = "http://127.0.0.1:8090/stream.mjpg";
 const char* kMjpegMagic = "MJPG";
 const uint64_t kMjpegMinIntervalMs = 66;
+const int kPreviewWaitMs = 1200;
+const int kMaxStartCandidates = 4;
 std::string g_video_device = "/dev/video0";
 
 struct MjpegConnState {
@@ -65,6 +67,7 @@ int EnsureDir(const char* path);
 bool ReadLiveFrame(std::vector<unsigned char>& frame);
 bool IsTcpPortListening(int port);
 bool IsFreshJpg(const char* path, int max_age_sec);
+bool StartPreviewNoWait();
 
 std::string AppPath(const char* rel) {
     if (rel == nullptr || rel[0] == '\0') return "";
@@ -157,16 +160,12 @@ pid_t StartFfmpegHttpStream(const std::string& device) {
         std::string log_path = logs_dir + "/ffmpeg_stream.log";
         freopen(log_path.c_str(), "a", stderr);
         std::string filter = BuildFfmpegVideoFilter();
-        std::string quality = std::to_string(GetEnvInt("IOTGW_VIDEO_QUALITY", 6));
+        std::string quality = std::to_string(GetEnvInt("IOTGW_VIDEO_QUALITY", 5));
         std::string fps = std::to_string(GetEnvInt("IOTGW_VIDEO_FPS", 15));
         // 先尝试 mjpeg 输入（CSI 摄像头常见），失败用 nv12
         execlp("sh", "sh", "-c",
             ("ffmpeg -nostdin -y -loglevel warning -fflags nobuffer -flags low_delay "
-             "-f v4l2 -input_format mjpeg -video_size 640x480 -framerate " + fps + " -i " + device +
-             " -an -vf " + filter + " -q:v " + quality +
-             " -update 1 " + std::string(kLiveJpg) + " 2>/dev/null || "
-             "ffmpeg -nostdin -y -loglevel warning -fflags nobuffer -flags low_delay "
-             "-f v4l2 -input_format nv12 -video_size 640x480 -framerate " + fps + " -i " + device +
+             "-f v4l2 -framerate " + fps + " -i " + device +
              " -an -vf " + filter + " -q:v " + quality +
              " -update 1 " + std::string(kLiveJpg)).c_str(),
             nullptr);
@@ -429,6 +428,16 @@ bool EnsurePreviewRunning() {
         return true;
     }
 
+    if (!StartPreviewNoWait()) return false;
+    return WaitForPreviewFrame(g_camera.stream_pid, kPreviewWaitMs);
+}
+
+bool StartPreviewNoWait() {
+    if (g_camera.stream_on && g_camera.stream_pid > 0 &&
+        ChildStillRunning(g_camera.stream_pid)) {
+        return true;
+    }
+
     StopChild(g_camera.stream_pid);
     g_camera.stream_on = 0;
     g_camera.stream_pid = 0;
@@ -437,9 +446,23 @@ bool EnsurePreviewRunning() {
     EnsureDir(kStreamDir);
     std::remove(kLiveJpg);
 
-    for (const auto& device : BuildVideoCandidates()) {
+    std::vector<std::string> devices = BuildVideoCandidates();
+    if (!devices.empty()) {
+        pid_t pid = StartFfmpegHttpStream(devices.front());
+        if (pid > 0) {
+            g_video_device = devices.front();
+            g_camera.stream_on = 1;
+            g_camera.stream_pid = pid;
+            g_camera.stream_backend = 2;
+            return true;
+        }
+    }
+
+    int tried = 0;
+    for (const auto& device : devices) {
+        if (tried++ >= kMaxStartCandidates) break;
         pid_t pid = StartFfmpegHttpStream(device);
-        if (pid > 0 && WaitForPreviewFrame(pid, 2500)) {
+        if (pid > 0) {
             g_video_device = device;
             g_camera.stream_on = 1;
             g_camera.stream_pid = pid;
@@ -449,9 +472,11 @@ bool EnsurePreviewRunning() {
         StopChild(pid);
     }
 
-    for (const auto& device : BuildVideoCandidates()) {
+    tried = 0;
+    for (const auto& device : devices) {
+        if (tried++ >= kMaxStartCandidates) break;
         pid_t pid = StartGstreamerPreview(device);
-        if (pid > 0 && WaitForPreviewFrame(pid, 2500)) {
+        if (pid > 0) {
             g_video_device = device;
             g_camera.stream_on = 1;
             g_camera.stream_pid = pid;
@@ -530,44 +555,10 @@ void CameraApi::HandleStartStream(mg_connection* c) {
         return;
     }
 
-    EnsureDir("stream");
-    EnsureDir(kStreamDir);
-    std::remove(kLiveJpg);
-
-    for (const auto& device : BuildVideoCandidates()) {
-        pid_t pid = StartFfmpegHttpStream(device);
-        if (pid <= 0) {
-            ReplyJson(c, 500, "{\"error\":\"fork_failed\"}");
-            return;
-        }
-        if (WaitForPreviewFrame(pid, 2500)) {
-            g_video_device = device;
-            g_camera.stream_on = 1;
-            g_camera.stream_pid = pid;
-            g_camera.stream_backend = 2;
-            ReplyJson(c, 200, std::string("{\"result\":\"ok\",\"mode\":\"mjpeg\",\"backend\":\"ffmpeg\",\"device\":\"")
-                + device + "\",\"path\":\"/api/camera/stream\"}");
-            return;
-        }
-        StopChild(pid);
-    }
-
-    for (const auto& device : BuildVideoCandidates()) {
-        pid_t pid = StartGstreamerPreview(device);
-        if (pid <= 0) {
-            ReplyJson(c, 500, "{\"error\":\"fork_failed\"}");
-            return;
-        }
-        if (WaitForPreviewFrame(pid, 2500)) {
-            g_video_device = device;
-            g_camera.stream_on = 1;
-            g_camera.stream_pid = pid;
-            g_camera.stream_backend = 2;
-            ReplyJson(c, 200, std::string("{\"result\":\"ok\",\"mode\":\"mjpeg_poll\",\"backend\":\"gstreamer\",\"device\":\"")
-                + device + "\",\"path\":\"/api/camera/stream\"}");
-            return;
-        }
-        StopChild(pid);
+    if (StartPreviewNoWait()) {
+        ReplyJson(c, 200, std::string("{\"result\":\"ok\",\"mode\":\"mjpeg\",\"backend\":\"ffmpeg\",\"device\":\"")
+            + g_video_device + "\",\"path\":\"/api/camera/stream\"}");
+        return;
     }
 
     ReplyJson(c, 500, std::string("{\"error\":\"camera_stream_failed\",\"log\":\"") + kLogsDir + "/ffmpeg_stream.log," + kLogsDir + "/gstreamer.log\"}");
@@ -598,7 +589,10 @@ void CameraApi::HandleSnapshot(mg_connection* c) {
     MakeMediaPath(filename, sizeof(filename), photos_dir.c_str(), "snap_%Y%m%d_%H%M%S", "jpg");
 
     int ret = -1;
-    EnsurePreviewRunning();
+    StartPreviewNoWait();
+    if (!IsCompleteJpg(kLiveJpg)) {
+        WaitForPreviewFrame(g_camera.stream_pid, kPreviewWaitMs);
+    }
     if (IsCompleteJpg(kLiveJpg)) {
         ret = CopyFile(kLiveJpg, filename);
     }
@@ -633,7 +627,11 @@ void CameraApi::HandleStartRecord(mg_connection* c) {
             g_camera.record_file + "\"}");
         return;
     }
-    if (!EnsurePreviewRunning()) {
+    StartPreviewNoWait();
+    if (!IsCompleteJpg(kLiveJpg)) {
+        WaitForPreviewFrame(g_camera.stream_pid, kPreviewWaitMs);
+    }
+    if (!IsCompleteJpg(kLiveJpg)) {
         ReplyJson(c, 400, "{\"error\":\"please_start_stream_first\"}");
         return;
     }
@@ -872,7 +870,7 @@ void CameraApi::HandleMjpegStream(mg_connection* c) {
 #ifdef _WIN32
     ReplyJson(c, 501, "{\"error\":\"mjpeg_not_supported_on_windows\"}");
 #else
-    if (!CheckStreamProcess()) {
+    if (!CheckStreamProcess() && !StartPreviewNoWait()) {
         ReplyJson(c, 503, "{\"error\":\"stream_not_running\",\"hint\":\"call /api/camera/start_stream first\"}");
         return;
     }

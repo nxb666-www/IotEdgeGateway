@@ -40,9 +40,7 @@ private slots:
     void loadLogs();
     void clearRemoteLogs();
     void openHistoryItem(int row, int column);
-    // TODO: Zigbee 串口接口，RK3568 烧写工具就绪后启用
-    // void openSerial();
-    // void closeSerial();
+    void toggleTransport();
 
 private:
     QWidget *buildMainPage();
@@ -84,6 +82,7 @@ private:
     QPushButton *streamStartBtn_ = nullptr;
     QPushButton *streamStopBtn_ = nullptr;
     QPushButton *recordBtn_ = nullptr;
+    QPushButton *transportBtn_ = nullptr;
 
     QCheckBox *ledCheck_ = nullptr;
     QSlider *ledSlider_ = nullptr;
@@ -99,8 +98,6 @@ private:
     QComboBox *historyLimit_ = nullptr;
     QTableWidget *historyTable_ = nullptr;
     QTextEdit *logText_ = nullptr;
-    // TODO: Zigbee 串口显示区，启用时取消注释
-    // QTextEdit *serialText_ = nullptr;
 };
 
 #endif

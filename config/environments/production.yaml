@@ -24,6 +24,11 @@ mqtt:
   clean_session: true
   topic_prefix: "iotgw/dev/"
 
+zigbee:
+  enabled: true
+  port: "/dev/ttyUSB0"
+  baud_rate: 115200
+
 camera:
   device: "/dev/video0"
 

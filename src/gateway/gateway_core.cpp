@@ -19,6 +19,7 @@
 #include "core/common/logger/logger.hpp"
 #include "core/device/manager/device_manager.hpp"
 #include "core/device/protocol_adapters/mqtt_adapter/mqtt_adapter.hpp"
+#include "core/device/protocol_adapters/zigbee_adapter/zigbee_adapter.hpp"
 #include "services/web_services/websocket/websocket_server.hpp"
 #include "services/web_services/api/rest_api.hpp"
 #include "services/web_services/api/device_api.hpp"
@@ -275,14 +276,112 @@ int GatewayCore::Run(int argc, char* argv[]) {
         }
     }
 
-    // ========== 6. 初始化 MQTT 客户端 ==========
+    MongooseServer server;
+
+    // ========== 6. 初始化 Zigbee 适配器 ==========
+    bool zigbee_enabled = false;
+    cfg.GetBool("zigbee.enabled", zigbee_enabled);
+    std::string zigbee_port = cfg.GetStringOr("zigbee.port", "/dev/ttyUSB0");
+    int64_t zigbee_baud = 115200;
+    cfg.GetInt64("zigbee.baud_rate", zigbee_baud);
+
+    ZigbeeAdapter zigbee_adapter(logger);
+    if (zigbee_enabled) {
+        ZigbeeAdapter::Options zigbee_opts;
+        zigbee_opts.serial_port = zigbee_port;
+        zigbee_opts.baud_rate = static_cast<int>(zigbee_baud);
+        zigbee_opts.enabled = true;
+
+        zigbee_adapter.SetMessageHandler(
+            [&](const std::string& device_id, const std::string& payload) {
+                // Zigbee 数据处理（和 MQTT 完全一样）
+                // 1. 更新设备注册表（复用 MQTT 的逻辑）
+                std::string id = device_id;
+                if (id.empty()) {
+                    size_t key = payload.find("\"device_id\"");
+                    if (key != std::string::npos) {
+                        size_t colon = payload.find(':', key);
+                        size_t first = colon == std::string::npos ? std::string::npos : payload.find('"', colon);
+                        size_t second = first == std::string::npos ? std::string::npos : payload.find('"', first + 1);
+                        if (first != std::string::npos && second != std::string::npos && second > first + 1) {
+                            id = payload.substr(first + 1, second - first - 1);
+                        }
+                    }
+                }
+                if (id.empty()) {
+                    logger->Warn("Zigbee 数据缺少 device_id，已忽略: " + payload);
+                    return;
+                }
+                std::string zigbee_topic = topic_prefix + "telemetry/" + id;
+                registry.UpsertMqttDeviceFromTopic(zigbee_topic, payload, NowMs(), id);
+
+                // 2. SQLite 保存历史数据
+                if (sqlite.IsOpen()) {
+                    sqlite.InsertTelemetry(id, "zigbee", payload, NowMs());
+                }
+
+                // 3. 触发规则引擎
+                double sensor_value = 0.0;
+                bool has_value = false;
+                size_t val_pos = payload.find("\"value\"");
+                if (val_pos != std::string::npos) {
+                    size_t colon = payload.find(':', val_pos);
+                    if (colon != std::string::npos) {
+                        size_t start = colon + 1;
+                        while (start < payload.length() && payload[start] == ' ') start++;
+                        size_t end = start;
+                        if (end < payload.length() && payload[end] == '-') end++;
+                        while (end < payload.length() &&
+                               ((payload[end] >= '0' && payload[end] <= '9') || payload[end] == '.')) {
+                            end++;
+                        }
+                        if (end > start) {
+                            sensor_value = std::stod(payload.substr(start, end - start));
+                            has_value = true;
+                        }
+                    }
+                }
+
+                if (has_value) {
+                    rule_engine.OnSensorValue(id, sensor_value,
+                        [&](const Rule& rule, const Action& action) {
+                            if (action.type == "actuator_set") {
+                                zigbee_adapter.SendCommand(action.actuator_id, action.value);
+                                logger->Info("Zigbee 规则触发: " + rule.id
+                                    + " → " + action.actuator_id + "=" + action.value);
+                            } else if (action.type == "log") {
+                                if (action.level == "warn") {
+                                    logger->Warn("Zigbee 告警规则 " + rule.id + ": " + action.message);
+                                } else {
+                                    logger->Info("Zigbee 规则 " + rule.id + ": " + action.message);
+                                }
+                            }
+                        });
+                }
+
+                // 4. WebSocket 广播
+                std::string frame = "{\"type\":\"zigbee_msg\""
+                    ",\"device_id\":" + json_utils::Quote(id) +
+                    ",\"payload\":" + json_utils::Quote(payload) + "}";
+                server.BroadcastText(frame);
+            }
+        );
+
+        if (zigbee_adapter.Connect(zigbee_opts)) {
+            logger->Info("Zigbee 适配器已连接: " + zigbee_port + " " + std::to_string(zigbee_baud));
+            RestApi::SetZigbeeAdapter(&zigbee_adapter);
+        } else {
+            logger->Warn("Zigbee 适配器连接失败，继续运行...");
+        }
+    }
+
+    // ========== 7. 初始化 MQTT 客户端 ==========
     // 这是网关和 ESP32 MQTT 设备之间的通信通道
     // 网关订阅 iotgw/dev/telemetry/# 接收传感器数据
     // 网关发布到 iotgw/dev/cmd/# 发送控制命令
     bool mqtt_enabled = false;
     cfg.GetBool("mqtt.enabled", mqtt_enabled);
 
-    MongooseServer server;
     std::shared_ptr<MqttClient> mqtt_client;
     MqttClient::Options mqtt_options;
     std::string mqtt_telemetry_topic;
@@ -505,7 +604,7 @@ int GatewayCore::Run(int argc, char* argv[]) {
     }
     logger->Info("HTTP 服务器已启动: " + addr);
 
-    // ========== 8. 主循环 ==========
+    // ========== 9. 主循环 ==========
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
 

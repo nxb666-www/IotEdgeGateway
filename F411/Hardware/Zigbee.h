@@ -15,6 +15,10 @@ void Zigbee_Init(void);
 //   len: 数据长度
 void Zigbee_Send(const uint8_t *data, uint16_t len);
 
+// 发送字符串到 Zigbee 网络
+//   str: 要发送的字符串（以'\0'结尾）
+void Zigbee_SendString(const char *str);
+
 // 检查是否收到 Zigbee 数据
 // 返回 1 表示有数据，0 表示无数据
 uint8_t Zigbee_HasData(void);

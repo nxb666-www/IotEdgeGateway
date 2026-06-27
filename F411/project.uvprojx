@@ -509,6 +509,16 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\USART1_Model.h</FilePath>
             </File>
+            <File>
+              <FileName>Zigbee.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Zigbee.c</FilePath>
+            </File>
+            <File>
+              <FileName>Zigbee.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Zigbee.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

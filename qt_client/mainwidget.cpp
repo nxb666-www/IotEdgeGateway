@@ -95,19 +95,11 @@ MainWidget::MainWidget(QWidget *parent)
 
     headerLayout->addWidget(title);
     headerLayout->addSpacing(20);
-    auto *mqttBtn = button(QStringLiteral("MQTT"), "primary");
-    mqttBtn->setMaximumWidth(80);
-    auto *zigbeeBtn = button(QStringLiteral("Zigbee"));
-    zigbeeBtn->setMaximumWidth(80);
-    zigbeeBtn->setToolTip(QStringLiteral("Zigbee 待接入"));
-    connect(mqttBtn, &QPushButton::clicked, this, [this]() {
-        appendLog(QStringLiteral("当前通信: MQTT"));
-    });
-    connect(zigbeeBtn, &QPushButton::clicked, this, [this]() {
-        appendLog(QStringLiteral("Zigbee 模块待接入"));
-    });
-    headerLayout->addWidget(mqttBtn);
-    headerLayout->addWidget(zigbeeBtn);
+    transportBtn_ = button(QStringLiteral("MQTT"), "primary");
+    transportBtn_->setMaximumWidth(80);
+    transportBtn_->setToolTip(QStringLiteral("点击切换通信方式"));
+    connect(transportBtn_, &QPushButton::clicked, this, &MainWidget::toggleTransport);
+    headerLayout->addWidget(transportBtn_);
     headerLayout->addStretch();
     headerLayout->addWidget(new QLabel(QStringLiteral("网关")));
     headerLayout->addWidget(serverEdit_);
@@ -769,13 +761,34 @@ void MainWidget::openHistoryItem(int row, int)
     QDesktopServices::openUrl(QUrl(url));
 }
 
-// TODO: Zigbee 串口接口，RK3568 烧写工具就绪后启用
-// void MainWidget::openSerial()
-// {
-//     if (serialText_) serialText_->append(QStringLiteral("Zigbee 串口后续接入"));
-// }
-//
-// void MainWidget::closeSerial()
-// {
-//     if (serialText_) serialText_->append(QStringLiteral("Zigbee 串口未打开"));
-// }
+void MainWidget::toggleTransport()
+{
+    auto *reply = net_->get(QNetworkRequest(QUrl(apiBase_ + "/api/transport")));
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        reply->deleteLater();
+        if (reply->error() != QNetworkReply::NoError) {
+            appendLog(QStringLiteral("获取通信方式失败"));
+            return;
+        }
+        const QJsonObject res = QJsonDocument::fromJson(reply->readAll()).object();
+        const QString current = res.value("active").toString("mqtt");
+        const QString next = (current == "mqtt") ? "zigbee" : "mqtt";
+
+        QJsonObject body;
+        body["transport"] = next;
+        QNetworkRequest req(QUrl(apiBase_ + "/api/transport"));
+        req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        auto *postReply = net_->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
+        connect(postReply, &QNetworkReply::finished, this, [this, postReply]() {
+            postReply->deleteLater();
+            if (postReply->error() != QNetworkReply::NoError) {
+                appendLog(QStringLiteral("切换通信方式失败"));
+                return;
+            }
+            const QJsonObject update = QJsonDocument::fromJson(postReply->readAll()).object();
+            const QString active = update.value("active").toString("mqtt");
+            transportBtn_->setText(active.toUpper());
+            appendLog(QStringLiteral("通信方式已切换: ") + active.toUpper());
+        });
+    });
+}
